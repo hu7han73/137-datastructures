@@ -84,12 +84,12 @@ bintray {
         name = '137-datastructures'
         licenses = ['MIT']
         desc = 'Data structures used for building applications, particularly data-mining projects.'
-        websiteUrl = 'todo' //''https://github.com/lukehb/137-common'
-        issueTrackerUrl = 'todo' //'https://github.com/lukehb/137-common/issues'
-        vcsUrl = 'todo' //''https://github.com/lukehb/137-common.git'
+        websiteUrl = 'https://github.com/lukehb/137-datastructures'
+        issueTrackerUrl = 'https://github.com/lukehb/137-datastructures/issues'
+        vcsUrl = 'https://github.com/lukehb/137-datastructures.git'
         labels = ['137', 'java', 'data-mining', 'data-structures']
         publicDownloadNumbers = true
-        githubRepo = 'todo' //''lukehb/137-common'
+        githubRepo = 'lukehb/137-datastructures'
         githubReleaseNotesFile = 'README.md'
     }
 }

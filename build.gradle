@@ -1,0 +1,95 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+apply plugin: 'com.jfrog.bintray'
+
+group 'onethreeseven'
+version '0.0.1'
+
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+    apply plugin: 'java'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven{url 'https://dl.bintray.com/lukehb/137-common'} //common module hosted on bintray
+    maven{url 'https://dl.bintray.com/lukehb/137-geo'} //geography module hosted on bintray
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile group: 'onethreeseven', name: 'geo', version: '0.0.3'
+    compile group: 'onethreeseven', name: 'common', version: '0.0.2'
+}
+
+jar {
+    manifest {
+        attributes("Implementation-Title": project.name,
+                "Implementation-Version": version,
+                'Built-By': System.getProperty('user.name'),
+                'Built-Date': new Date(),
+                'Built-JDK': System.getProperty('java.version'))
+    }
+}
+
+jar.dependsOn(test)
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            groupId group
+            artifactId project.name
+            version version
+
+            Artifact sourcesJar
+        }
+    }
+}
+
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.bintrayUser : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayKey') ? project.bintrayKey : System.getenv('BINTRAY_KEY')
+    publications = ['MyPublication']
+    publish = true //If version should be auto published after an upload
+    pkg {
+        repo = '137-datastructures'
+        name = '137-datastructures'
+        licenses = ['MIT']
+        desc = 'Data structures used for building applications, particularly data-mining projects.'
+        websiteUrl = 'todo' //''https://github.com/lukehb/137-common'
+        issueTrackerUrl = 'todo' //'https://github.com/lukehb/137-common/issues'
+        vcsUrl = 'todo' //''https://github.com/lukehb/137-common.git'
+        labels = ['137', 'java', 'data-mining', 'data-structures']
+        publicDownloadNumbers = true
+        githubRepo = 'todo' //''lukehb/137-common'
+        githubReleaseNotesFile = 'README.md'
+    }
+}

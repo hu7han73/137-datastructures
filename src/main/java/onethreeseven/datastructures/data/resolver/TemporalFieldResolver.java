@@ -1,8 +1,8 @@
 package onethreeseven.datastructures.data.resolver;
 
 import onethreeseven.common.util.TimeUtil;
-
 import java.time.LocalDateTime;
+import java.util.function.Function;
 
 /**
  * Using elements of a string[] (given the indices) this class can formulate a {@link java.time.LocalDateTime}.
@@ -12,15 +12,32 @@ public class TemporalFieldResolver extends AbstractStringArrayToFieldResolver<Lo
 
     private final StringBuilder sb;
 
-    public TemporalFieldResolver(int... indices) {
+    private final Function<String, LocalDateTime> textToDateTimeParser;
+
+    /**
+     * Uses a custom string to date-time function to resolve a combined string.
+     * @param customResolver The resolver function to use.
+     * @param indices The indices of the strings to combine together into a date-time string to parse.
+     */
+    public TemporalFieldResolver(Function<String, LocalDateTime> customResolver, int... indices){
         super(indices);
+        this.textToDateTimeParser = customResolver;
         this.sb = new StringBuilder();
+    }
+
+    /**
+     * Calls {@link TemporalFieldResolver#TemporalFieldResolver(Function, int...)} and passes
+     * {@link TimeUtil#parseDate(String)} as the custom resolver.
+     * @param indices The indices of the strings to combine together into a date-time string to parse.
+     */
+    public TemporalFieldResolver(int... indices) {
+        this(TimeUtil::parseDate, indices);
     }
 
     @Override
     public LocalDateTime resolve(String[] in) {
         String combinedTimeStamps = combineTimeStamps(in);
-        return TimeUtil.parseDate(combinedTimeStamps);
+        return this.textToDateTimeParser.apply(combinedTimeStamps);
     }
 
     private String combineTimeStamps(String[] timeStampParts){

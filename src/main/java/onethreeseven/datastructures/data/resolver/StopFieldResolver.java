@@ -37,6 +37,6 @@ public class StopFieldResolver implements IResolver<String[], Boolean> {
     @Override
     public Boolean resolve(String[] in) {
         String stopMoveStr = in[arrIdx].trim().toUpperCase();
-        return stopMoveStr.equals(ResolverConstants.STOPPED);
+        return stopMoveStr.equals(isStoppedString);
     }
 }

@@ -12,6 +12,6 @@ repositories {
 }
 
 dependencies {
-    compile 'onethreeseven:datastructures:0.0.1'
+    compile 'onethreeseven:datastructures:0.0.2'
 }
 ```

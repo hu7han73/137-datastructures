@@ -19,7 +19,7 @@ public class SpatiotemporalTrajectoryWriter extends AbstractWriter<Map<String, S
     private static final DateTimeFormatter temporalFmt = DateTimeFormatter.ISO_DATE_TIME;
 
     @Override
-    protected void write(BufferedWriter bw, Map<String, STTrajectory> stTrajs) throws IOException {
+    protected boolean write(BufferedWriter bw, Map<String, STTrajectory> stTrajs) throws IOException {
         for (Map.Entry<String, STTrajectory> stEntry : stTrajs.entrySet()) {
             final String id = stEntry.getKey();
             for (STPt stPt : stEntry.getValue()) {
@@ -37,5 +37,6 @@ public class SpatiotemporalTrajectoryWriter extends AbstractWriter<Map<String, S
                 bw.newLine();
             }
         }
+        return true;
     }
 }

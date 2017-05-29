@@ -26,7 +26,7 @@ import java.util.Map;
 public class TrajectoryWriter extends AbstractWriter<Map<String, ? extends ITrajectory>> {
 
     @Override
-    protected void write(BufferedWriter bw, Map<String, ? extends ITrajectory> trajectories) throws IOException {
+    protected boolean write(BufferedWriter bw, Map<String, ? extends ITrajectory> trajectories) throws IOException {
         for (Map.Entry<String, ? extends ITrajectory> trajEntry : trajectories.entrySet()) {
             String id = trajEntry.getKey();
             Iterator<double[]> coordIter = trajEntry.getValue().coordinateIter();
@@ -34,6 +34,7 @@ public class TrajectoryWriter extends AbstractWriter<Map<String, ? extends ITraj
                 writePt(bw, id, coordIter.next());
             }
         }
+        return true;
     }
 
     private void writePt(BufferedWriter bw, String id, double[] values) throws IOException {

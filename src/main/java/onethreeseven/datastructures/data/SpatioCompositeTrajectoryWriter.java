@@ -14,7 +14,7 @@ import java.util.Map;
 public class SpatioCompositeTrajectoryWriter extends AbstractWriter<Map<String, ? extends SpatioCompositeTrajectory>> {
 
     @Override
-    protected void write(BufferedWriter bw, Map<String, ? extends SpatioCompositeTrajectory> trajMap) throws IOException {
+    protected boolean write(BufferedWriter bw, Map<String, ? extends SpatioCompositeTrajectory> trajMap) throws IOException {
         for (Map.Entry<String, ? extends SpatioCompositeTrajectory> entry : trajMap.entrySet()) {
             final SpatioCompositeTrajectory traj = entry.getValue();
             boolean cartesianModeTraj = traj.isInCartesianMode();
@@ -32,6 +32,7 @@ public class SpatioCompositeTrajectoryWriter extends AbstractWriter<Map<String, 
                 traj.toCartesian();
             }
         }
+        return true;
     }
 
     private void writePt(BufferedWriter bw, String id, CompositePt pt) throws IOException {

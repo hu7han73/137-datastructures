@@ -15,6 +15,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -204,13 +205,7 @@ public class TrajectoryDatasetParserTest {
             Assert.assertTrue(actual.containsKey(id));
             STTrajectory expectedTraj = expected.get(id);
             STTrajectory actualTraj = actual.get(id);
-            Assert.assertTrue(expectedTraj.size() == actualTraj.size());
-            for (int i = 0; i < actualTraj.size(); i++) {
-                STPt expectPt = expectedTraj.get(i);
-                STPt actualPt = actualTraj.get(i);
-                Assert.assertArrayEquals(expectPt.getCoords(), actualPt.getCoords(), 1e-05);
-                Assert.assertTrue(ChronoUnit.SECONDS.between(expectPt.getTime(), actualPt.getTime()) == 0);
-            }
+            assertTrajectoryEquality(actualTraj, expectedTraj);
         }
         //
         // 5 - Cleanup
@@ -223,5 +218,79 @@ public class TrajectoryDatasetParserTest {
         }
     }
 
+
+    @Test
+    public void testGenerateWriteAndThenIterateAndParse(){
+
+        final int nTrajs = 10;
+        final boolean inCartesianMode = false;
+        //
+        // 1 - GENERATE
+        //
+        Map<String, STTrajectory> expected = DataGeneratorUtil.generateSpatiotemporalTrajectories(nTrajs);
+        logger.info("Generated " + nTrajs + " spatio-temporal trajectories.");
+        //
+        // 2 - Write
+        //
+        String delimiter = ",";
+        SpatiotemporalTrajectoryWriter writer = new SpatiotemporalTrajectoryWriter();
+        writer.setDelimiter(delimiter);
+        File f = new File("testGeneratedTraj");
+        if(f.exists() && f.delete()){
+            logger.info("Output file already existed, so deleted old one before running test.");
+        }
+
+        writer.write(f, expected);
+        logger.info("Finished writing the trajectory to file at: " + f.getAbsolutePath());
+        //
+        // 3 - Parse and Iterate
+        //
+        STTrajectoryParser parser = new STTrajectoryParser(1,2,3)
+                .setDelimiter(delimiter)
+                .setInCartesianMode(inCartesianMode)
+                .setIdResolver(new IdFieldResolver(0));
+
+        Iterator<Map.Entry<String, STTrajectory>> iter = parser.iterator(f);
+
+        logger.info("Beginning parsing, iterating, and comparing the trajectory file.");
+
+        //
+        // 4 - Compare
+        //
+
+        int nIterations = 0;
+
+        while(iter.hasNext()){
+            Map.Entry<String, STTrajectory> entry = iter.next();
+            nIterations++;
+            Assert.assertTrue(expected.containsKey(entry.getKey()));
+            STTrajectory expectedTraj = expected.get(entry.getKey());
+            STTrajectory actualTraj = entry.getValue();
+            assertTrajectoryEquality(actualTraj, expectedTraj);
+        }
+
+        Assert.assertTrue(nIterations == expected.size());
+
+        //
+        // 5 - Cleanup
+        //
+        if(f.delete()){
+            logger.info("Deleted file: " + f.getAbsolutePath());
+        }
+        else{
+            logger.info("Could not delete file: " + f.getAbsolutePath());
+        }
+    }
+
+
+    private static void assertTrajectoryEquality(STTrajectory actualTraj, STTrajectory expectedTraj){
+        Assert.assertTrue(expectedTraj.size() == actualTraj.size());
+        for (int i = 0; i < actualTraj.size(); i++) {
+            STPt expectPt = expectedTraj.get(i);
+            STPt actualPt = actualTraj.get(i);
+            Assert.assertArrayEquals(expectPt.getCoords(), actualPt.getCoords(), 1e-05);
+            Assert.assertTrue(ChronoUnit.SECONDS.between(expectPt.getTime(), actualPt.getTime()) == 0);
+        }
+    }
 
 }

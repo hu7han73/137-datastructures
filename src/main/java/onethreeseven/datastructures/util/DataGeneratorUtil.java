@@ -107,7 +107,7 @@ public final class DataGeneratorUtil {
 
     /**
      * Generate n spatio-temporal trajectories within a given region that have the same starting time.
-     * and and increasing by 3000ms. They are all generated with [-180,180] & [-90,90] (longitude, latitude)
+     * and and increasing by 3000ms. They are all generated with [-180,180] {@literal &} [-90,90] (longitude, latitude)
      * and they coordinates are not converted to cartesian coordinates.
      * @param nTrajectories how many trajectories to make
      * @return a map of spatio-temporal trajectories.

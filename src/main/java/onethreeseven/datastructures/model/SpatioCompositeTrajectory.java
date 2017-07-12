@@ -19,7 +19,7 @@ import java.util.Iterator;
  * @param <T> the type of composite pt being used.
  * @author Luke Bermingham
  */
-public abstract class SpatioCompositeTrajectory<T extends CompositePt> extends CompositeTrajectory<T> {
+public class SpatioCompositeTrajectory<T extends CompositePt> extends CompositeTrajectory<T> {
 
     private boolean inCartesianMode = false;
     private final AbstractGeographicProjection projection;

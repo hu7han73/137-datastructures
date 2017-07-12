@@ -29,6 +29,7 @@ public class STTrajectoryParser extends AbstractTrajectoryParser<STTrajectory> {
      * this can be triggered by the user by called {@link SpatialTrajectory#toCartesian()}.
      * @param latIdx The index of the latitude field
      * @param lonIdx The index of the longitude field
+     * @param temporalIndices The indices for the temporal field(s).
      */
     public STTrajectoryParser(int latIdx, int lonIdx, int... temporalIndices){
         this(new ProjectionMercator(),

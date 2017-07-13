@@ -53,7 +53,7 @@ public abstract class AbstractTrajectoryParser<T extends ITrajectory> extends Ab
     @Override
     protected Map<String, T> done() {
         Map<String, T> o = output;
-        output = null;
+        output = new HashMap<>();
         return o;
     }
 

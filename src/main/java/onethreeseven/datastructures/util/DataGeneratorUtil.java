@@ -3,10 +3,7 @@ package onethreeseven.datastructures.util;
 import onethreeseven.common.util.Maths;
 import onethreeseven.common.util.NDUtil;
 import onethreeseven.datastructures.algorithm.TrajectoryDragonCurve;
-import onethreeseven.datastructures.model.STStopTrajectory;
-import onethreeseven.datastructures.model.STTrajectory;
-import onethreeseven.datastructures.model.TimeAndStop;
-import onethreeseven.datastructures.model.Trajectory;
+import onethreeseven.datastructures.model.*;
 import onethreeseven.geo.projection.ProjectionEquirectangular;
 import onethreeseven.geo.projection.ProjectionMercator;
 import java.time.Instant;
@@ -103,6 +100,25 @@ public final class DataGeneratorUtil {
         }
 
         return result;
+    }
+
+    /**
+     * Generate a random {@link STTrajectory} of a certain size.
+     * The movement is completely random on the globe and the time of each entry is the
+     * current time it was created by the program.
+     * @param size How many entries will the trajectory have.
+     * @return The {@link STTrajectory}.
+     */
+    public static STTrajectory generateRandomSTTrajectory(int size){
+        STTrajectory traj = new STTrajectory(false, new ProjectionEquirectangular());
+        final Random rand = new Random();
+
+        for (int i = 0; i < size; i++) {
+            double lat = -90 + rand.nextDouble() * 180;
+            double lon = -180 + rand.nextDouble() * 360;
+            traj.addGeographic(new double[]{lat, lon}, LocalDateTime.now());
+        }
+        return traj;
     }
 
     /**

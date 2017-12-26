@@ -1,6 +1,5 @@
 package onethreeseven.datastructures.data;
 
-import onethreeseven.common.util.Res;
 import onethreeseven.datastructures.data.resolver.IdFieldResolver;
 import onethreeseven.datastructures.data.resolver.NumericFieldsResolver;
 import onethreeseven.datastructures.data.resolver.SameIdResolver;
@@ -31,11 +30,11 @@ public class TrajectoryDatasetParserTest {
 
     @Test
     public void testParseEasyDataset() throws Exception {
-        Res res = new Res("mockDatasets");
-        File dataset = res.getFile("easy");
+        File dataset = MockData.makeEasyDataset();
         Map<String, Trajectory> trajectories = new TrajectoryParser(
                 new IdFieldResolver(0),
                 new NumericFieldsResolver(1,2)).setnLinesToSkip(1).parse(dataset);
+        dataset.deleteOnExit();
 
         Assert.assertTrue("Easy data-set should have a trajectory with id '1'", trajectories.containsKey("1"));
 
@@ -58,7 +57,7 @@ public class TrajectoryDatasetParserTest {
 
     @Test
     public void testParseSampleTrucks() throws URISyntaxException {
-        File dataset = new Res("mockDatasets").getFile("trucks");
+        File dataset = MockData.makeTrucksDataset();
 
         ProjectionMercator projection = new ProjectionMercator();
 
@@ -69,7 +68,11 @@ public class TrajectoryDatasetParserTest {
                 .setProjection(projection)
                 .setInCartesianMode(true);
 
+
+
         Map<String, STTrajectory> trajectories = parser.parse(dataset);
+
+        dataset.deleteOnExit();
 
         //0862;1;10/09/2002;09:15:59;23.845089;38.018470;486253.80;4207588.10
         STTrajectory traj = trajectories.get("0862");
@@ -93,7 +96,7 @@ public class TrajectoryDatasetParserTest {
 
     @Test
     public void testParseSampleGeolife() throws URISyntaxException {
-        File dataset = new Res("mockDatasets").getFile("geolife");
+        File dataset = MockData.makeGeolifeDataset();
         ProjectionMercator projection = new ProjectionMercator();
 
         STTrajectoryParser parser = new STTrajectoryParser(0,1,5,6)
@@ -102,6 +105,8 @@ public class TrajectoryDatasetParserTest {
                 .setInCartesianMode(true);
 
         Map<String, STTrajectory> trajectories = parser.parse(dataset);
+
+        dataset.deleteOnExit();
 
         Assert.assertTrue("Geolife data-set should have a trajectory with id '0'", trajectories.containsKey("0"));
 
@@ -137,7 +142,7 @@ public class TrajectoryDatasetParserTest {
 
     @Test
     public void testParseSpaceSeparated() throws URISyntaxException {
-        File dataset = new Res("mockDatasets").getFile("spaces");
+        File dataset = MockData.makeSpacesDataset();
 
         final String id = "137";
 
@@ -149,6 +154,8 @@ public class TrajectoryDatasetParserTest {
 
         //parse trajectories
         Map<String, Trajectory> trajectories = parser.parse(dataset);
+
+        dataset.deleteOnExit();
 
         Assert.assertTrue(trajectories.containsKey(id));
 

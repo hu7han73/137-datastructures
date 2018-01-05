@@ -19,7 +19,7 @@ public class SpatialTrajectoryParser extends AbstractTrajectoryParser<SpatialTra
 
     /**
      * Makes a spatial trajectory parser where index 0 is the id, lat/lon indices are passed
-     * in and we assume a Mercator projection. Coordinates are not converted to cartesian coordinates,
+     * in and we assume a {@link ProjectionEquirectangular} projection. Coordinates are not converted to cartesian coordinates,
      * this can be triggered by the user by called {@link SpatialTrajectory#toCartesian()}.
      * @param latIdx The index of the latitude field
      * @param lonIdx The index of the longitude field
@@ -30,6 +30,12 @@ public class SpatialTrajectoryParser extends AbstractTrajectoryParser<SpatialTra
 
     public SpatialTrajectoryParser(IdResolver idResolver, int latIdx, int lonIdx){
         super(idResolver,new NumericFieldsResolver(latIdx, lonIdx));
+    }
+
+    public SpatialTrajectoryParser(IdResolver idResolver, NumericFieldsResolver latlonResolver, AbstractGeographicProjection projection, boolean inCartesianMode){
+        super(idResolver, latlonResolver);
+        this.projection = projection;
+        this.inCartesianMode = inCartesianMode;
     }
 
     @Override

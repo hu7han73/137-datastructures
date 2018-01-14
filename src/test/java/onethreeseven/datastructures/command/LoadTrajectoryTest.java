@@ -1,9 +1,7 @@
 package onethreeseven.datastructures.command;
 
 import onethreeseven.datastructures.data.MockData;
-import onethreeseven.datastructures.model.ITrajectory;
-import onethreeseven.datastructures.model.STPt;
-import onethreeseven.datastructures.model.STTrajectory;
+import onethreeseven.datastructures.model.*;
 import onethreeseven.jclimod.CLIProgram;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -21,6 +19,8 @@ public class LoadTrajectoryTest {
     private static CLIProgram program;
     private static File trucksFile;
     private static File geolifeFile;
+    private static File stopsFile;
+    private static File spatialOnlyFile;
 
     private static Map<String, ? extends ITrajectory> output;
 
@@ -35,6 +35,8 @@ public class LoadTrajectoryTest {
         });
         trucksFile = MockData.makeTrucksDataset();
         geolifeFile = MockData.makeGeolifeDataset();
+        stopsFile = MockData.makeStopsDataset();
+        spatialOnlyFile = MockData.makeEasyDataset();
     }
 
     @AfterClass
@@ -94,7 +96,8 @@ public class LoadTrajectoryTest {
         ITrajectory outputTraj = output.get("0862");
         Assert.assertTrue(outputTraj instanceof STTrajectory);
         STTrajectory actual = (STTrajectory) outputTraj;
-        compareTrajectories(actual, expected);
+        compareCoordinates(actual, expected);
+        compareTimes(actual, expected);
     }
 
     @Test
@@ -109,10 +112,56 @@ public class LoadTrajectoryTest {
         ITrajectory outputTraj = output.get("0");
         Assert.assertTrue(outputTraj instanceof STTrajectory);
         STTrajectory actual = (STTrajectory) outputTraj;
-        compareTrajectories(actual, expected);
+        compareCoordinates(actual, expected);
+        compareTimes(actual, expected);
     }
 
-    private void compareTrajectories(STTrajectory actual, STTrajectory expected){
+    @Test
+    public void testParseStopsTrajectory(){
+        String[] args = ("lt -i " + stopsFile.getAbsolutePath() + " -id 0 -ll 1 2 -t 3 -s 4 -n 0").split(" ");
+        STStopTrajectory expected = MockData.makeMockStopsTrajectory();
+        //load in the trajectory
+        Assert.assertTrue(program.doCommand(args));
+
+        //compare the result
+        Assert.assertTrue(output.containsKey("1"));
+        ITrajectory outputTraj = output.get("1");
+        Assert.assertTrue(outputTraj instanceof STStopTrajectory);
+        STStopTrajectory actual = (STStopTrajectory) outputTraj;
+        compareCoordinates(actual, expected);
+        compareTimes(actual, expected);
+        compareStops(actual, expected);
+    }
+
+    @Test
+    public void testParseSpatialTrajectory(){
+        String[] args = ("lt -i " + spatialOnlyFile.getAbsolutePath() + " -id 0 -ll 1 2").split(" ");
+        SpatialTrajectory expected = MockData.makeMockSpatialOnlyTrajectory();
+        //load in the trajectory
+        Assert.assertTrue(program.doCommand(args));
+
+        //compare the result
+        Assert.assertTrue(output.containsKey("1"));
+        ITrajectory outputTraj = output.get("1");
+        Assert.assertTrue(outputTraj instanceof SpatialTrajectory);
+        SpatialTrajectory actual = (SpatialTrajectory) outputTraj;
+        compareCoordinates(actual, expected);
+    }
+
+    private void compareStops(STStopTrajectory actual, STStopTrajectory expected){
+        Assert.assertEquals(expected.size(), actual.size());
+
+        actual.toGeographic();
+        expected.toGeographic();
+
+        for (int i = 0; i < expected.size(); i++) {
+            STStopPt actualPt = actual.get(i);
+            STStopPt expectedPt = expected.get(i);
+            Assert.assertEquals(expectedPt.isStopped(), actualPt.isStopped());
+        }
+    }
+
+    private void compareTimes(SpatioCompositeTrajectory<? extends STPt> actual, SpatioCompositeTrajectory<? extends STPt> expected){
         Assert.assertEquals(expected.size(), actual.size());
 
         actual.toGeographic();
@@ -122,10 +171,20 @@ public class LoadTrajectoryTest {
             STPt actualPt = actual.get(i);
             STPt expectedPt = expected.get(i);
             Assert.assertTrue(actualPt.getTime().equals(expectedPt.getTime()));
-            Assert.assertArrayEquals(expectedPt.getCoords(), actualPt.getCoords(), 1e-05);
         }
     }
 
-    //just need to add a stop trajectory to the mock data and test that
+    private void compareCoordinates(SpatioCompositeTrajectory actual, SpatioCompositeTrajectory expected){
+        Assert.assertEquals(expected.size(), actual.size());
+
+        actual.toGeographic();
+        expected.toGeographic();
+
+        for (int i = 0; i < expected.size(); i++) {
+            CompositePt actualPt = actual.get(i);
+            CompositePt expectedPt = expected.get(i);
+            Assert.assertArrayEquals(expectedPt.getCoords(), actualPt.getCoords(), 1e-05);
+        }
+    }
 
 }

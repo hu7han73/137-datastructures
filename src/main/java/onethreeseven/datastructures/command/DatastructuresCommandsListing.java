@@ -12,7 +12,8 @@ public class DatastructuresCommandsListing extends AbstractCommandsListing {
     @Override
     protected CLICommand[] createCommands(JCommander jCommander, Object... objects) {
         return new CLICommand[]{
-                new LoadTrajectory()
+                new LoadTrajectory(),
+                new GenerateTrajectories()
         };
     }
 }

@@ -10,10 +10,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.function.LongSupplier;
 
 /**
@@ -136,6 +133,65 @@ public final class DataGeneratorUtil {
     }
 
     /**
+     * Generates a map of spatio-temporal trajectories.
+     * @param nTrajs How many trajectories.
+     * @param nEntries How many entries per trajectory.
+     * @param startLat The approximate starting latitude.
+     * @param startLon The approximate starting longitude.
+     * @param gpsNoiseMetres The noise in metres to perturb the entries by.
+     * @param speedMetresPerSecond The speed of the trajectory in metres per second.
+     * @param timeStepMillis The time-step in millis between entries.
+     * @return A map of {@link STTrajectory}.
+     */
+    public static Map<String, STTrajectory> generateSpatiotemporalTrajectories(int nTrajs,
+                                                                               int nEntries,
+                                                                               double startLat,
+                                                                               double startLon,
+                                                                               double gpsNoiseMetres,
+                                                                               double speedMetresPerSecond,
+                                                                               long timeStepMillis){
+
+        final Map<String, STTrajectory> result = new HashMap<>();
+        final ProjectionEquirectangular projection = new ProjectionEquirectangular();
+        final TrajectoryDragonCurve gen = new TrajectoryDragonCurve();
+        final Random rand = new Random();
+        final double speedPerTimeStep = timeStepMillis / 1000L * speedMetresPerSecond;
+
+        gen.setBounds(new double[][]{new double[]{-1,1}, new double[]{-1,1}});
+        gen.setLimit(nEntries);
+
+        for (int i = 0; i < nTrajs; i++) {
+
+            Trajectory offsets = gen.run();
+
+            double[] startCoords = projection.geographicToCartesian(startLat, startLon);
+            startCoords[0] += rand.nextDouble() * gpsNoiseMetres;
+            startCoords[1] += rand.nextDouble() * gpsNoiseMetres;
+
+            STTrajectory stTraj = new STTrajectory(false, projection);
+            LocalDateTime curTime = LocalDateTime.now();
+
+            int size = offsets.size();
+            for (int j = 0; j < size; j++) {
+
+                double[] offsetCoords = offsets.get(j);
+                curTime = curTime.plus(timeStepMillis, ChronoUnit.MILLIS);
+
+                double offsetX = (offsetCoords[0] * speedPerTimeStep * j) + (rand.nextDouble() * gpsNoiseMetres);
+                double offsetY = (offsetCoords[1] * speedPerTimeStep * j) + (rand.nextDouble() * gpsNoiseMetres);
+                offsetCoords[0] = startCoords[0] + offsetX;
+                offsetCoords[1] = startCoords[1] + offsetY;
+                offsetCoords = projection.cartesianToGeographic(offsetCoords);
+                stTraj.addGeographic(offsetCoords, curTime);
+            }
+
+            result.put(String.valueOf(i), stTraj);
+        }
+        return result;
+
+    }
+
+    /**
      * Generate n spatio-temporal trajectories within a given region that have the same starting time.
      * and and increase by the same amount of time.
      * @param bounds the geographic sector to generate the trajectories within
@@ -157,7 +213,7 @@ public final class DataGeneratorUtil {
 
         for (int i = 0; i < nTrajectories; i++) {
             Trajectory trajectory = gen.run();
-            STTrajectory stTraj = new STTrajectory(inCartesianMode, new ProjectionMercator());
+            STTrajectory stTraj = new STTrajectory(inCartesianMode, new ProjectionEquirectangular());
             LocalDateTime curTime = Instant.ofEpochMilli(timeStart).atZone(ZoneId.systemDefault()).toLocalDateTime();
 
             for (double[] latlon : trajectory) {
@@ -244,6 +300,32 @@ public final class DataGeneratorUtil {
         return trajs;
     }
 
+    public static Map<String, STStopTrajectory> generateTrajsWithStops(int nTrajs,
+                                                          int nEntries,
+                                                          double startLat,
+                                                          double startLon,
+                                                          double gpsNoiseMetres,
+                                                          double speedMetresPerSecond,
+                                                          long timeStepMillis,
+                                                          long stopDurationMillis,
+                                                          int nStops){
+
+        Map<String, STStopTrajectory> output = new HashMap<>();
+
+        for (int i = 0; i < nTrajs; i++) {
+            output.put(String.valueOf(i), generateTrajectoryWithStops(
+                    nEntries,
+                    nStops,
+                    timeStepMillis,
+                    stopDurationMillis,
+                    speedMetresPerSecond,
+                    gpsNoiseMetres,
+                    startLat,
+                    startLon));
+        }
+        return output;
+    }
+
     /**
      * Generate a noisy trajectory that moves and stops.
      * It travels in a random heading during the movement
@@ -252,20 +334,26 @@ public final class DataGeneratorUtil {
      * @param nEntries How many entries should the trajectory have.
      * @param nStops How many stops should the trajectory have.
      * @param timeStepMillis What should be the time step between trajectory entries.
+     * @param stopDurationMillis The duration of a stop episode in milliseconds.
      * @param maxSpeed What is the maximum speed the trajectory will try to reach when moving.
      * @param avgNoise What is the average noise that is applied to every point.
      * @param startLat What is the starting latitude.
      * @param startLon What is the starting longitude.
      * @return A spatio-temporal trajectory with stops and moves.
      */
-    public static STStopTrajectory generateTrajectoryWithStops(int nEntries, int nStops, long timeStepMillis, double maxSpeed,
+    public static STStopTrajectory generateTrajectoryWithStops(int nEntries, int nStops, long timeStepMillis,
+                                                               long stopDurationMillis, double maxSpeed,
                                                                double avgNoise, double startLat, double startLon){
-        //10% of points will be stops
-        int nRequiredStopPts = (int) (nEntries * 0.1);
+        if(stopDurationMillis > timeStepMillis * nEntries){
+            throw new IllegalArgumentException("Stop duration should exceed total trajectory duration.");
+        }
+
+        double percentageStops = ((double)(stopDurationMillis * nStops)) / (timeStepMillis * nEntries);
+        int nRequiredStopPts = (int) (nEntries * percentageStops);
         int avgStopPtsPerStop = (int) Math.ceil(nRequiredStopPts/(double)nStops);
 
         int nRequiredMovePts = nEntries - nRequiredStopPts;
-        int avgMovePtsPerMove = nRequiredMovePts/(nStops-1);
+        int avgMovePtsPerMove = (int) Math.ceil(nRequiredMovePts/((double)(nStops-1)));
 
         //make the actual STS Trajectory
         final STStopTrajectory traj = new STStopTrajectory(true, new ProjectionEquirectangular());

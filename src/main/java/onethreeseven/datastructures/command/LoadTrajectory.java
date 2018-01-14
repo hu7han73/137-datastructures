@@ -83,6 +83,15 @@ public class LoadTrajectory extends CLICommand {
     private String delimiter = ",";
 
     @Override
+    protected void resetParametersAfterRun(Class clazz) {
+        super.resetParametersAfterRun(clazz);
+        //reset to default values
+        stopIndex = -1;
+        skipNLines = 1;
+        delimiter = ",";
+    }
+
+    @Override
     protected String getUsage() {
         return "\na spatial trajectory: lt -id 0 -ll 1 2 \n" +
                "a spatio-temporal trajectory: lt -id 0 -ll 1 2 -t 3 4 \n" +
@@ -207,17 +216,17 @@ public class LoadTrajectory extends CLICommand {
 
     @Override
     public String getCommandName() {
-        return "loadTraj";
+        return "loadTrajs";
     }
 
     @Override
     public String[] getCommandNameAliases() {
-        return new String[]{"lt", "loadTrajectory"};
+        return new String[]{"lt", "loadTrajectories"};
     }
 
     @Override
     public String getDescription() {
-        return "Loads a trajectory into the program for further processing.";
+        return "Loads trajectories into the program for further processing.";
     }
 
     private AbstractTrajectoryParser<? extends ITrajectory> makeTrajectoryParser(){

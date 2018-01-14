@@ -1,14 +1,15 @@
 package onethreeseven.datastructures.data;
 
 import onethreeseven.common.util.FileUtil;
+import onethreeseven.datastructures.model.STStopTrajectory;
 import onethreeseven.datastructures.model.STTrajectory;
+import onethreeseven.datastructures.model.SpatialTrajectory;
+import onethreeseven.datastructures.model.TimeAndStop;
 import onethreeseven.geo.projection.ProjectionEquirectangular;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Some mock data for the tests in this package.
@@ -29,7 +30,7 @@ public class MockData {
     }
 
     public static File makeEasyDataset(){
-        return makeMockDataset(getEasyDataString());
+        return makeMockDataset(getSpatialOnlyDataString());
     }
 
     public static File makeGeolifeDataset(){
@@ -44,13 +45,27 @@ public class MockData {
         return makeMockDataset(getTrucksDataString());
     }
 
-    public static String getEasyDataString(){
+    public static File makeStopsDataset(){
+        return makeMockDataset(getStopTrajectoryDataString());
+    }
+
+    public static String getSpatialOnlyDataString(){
         return "id x y\n" +
                 "1,137,137\n" +
                 "1,15,10\n" +
                 "1,0,10\n" +
                 "1,-10,5\n" +
                 "1,0,0";
+    }
+
+    public static SpatialTrajectory makeMockSpatialOnlyTrajectory(){
+        SpatialTrajectory spatialTrajectory = new SpatialTrajectory(false, new ProjectionEquirectangular());
+        spatialTrajectory.addGeographic(new double[]{137,137});
+        spatialTrajectory.addGeographic(new double[]{15,10});
+        spatialTrajectory.addGeographic(new double[]{0,10});
+        spatialTrajectory.addGeographic(new double[]{-10,5});
+        spatialTrajectory.addGeographic(new double[]{0,0});
+        return spatialTrajectory;
     }
 
     public static String getGeolifeDataString(){
@@ -81,6 +96,31 @@ public class MockData {
         traj.addGeographic(new double[]{38.018470, 23.845089}, LocalDateTime.of(2002, 9, 10, 9, 15, 59));
         traj.addGeographic(new double[]{38.018069, 23.845179}, LocalDateTime.of(2002, 9, 10, 9, 16, 29));
         traj.addGeographic(new double[]{38.018241, 23.845530}, LocalDateTime.of(2002, 9, 10, 9, 17, 30));
+        return traj;
+    }
+
+    public static String getStopTrajectoryDataString(){
+        return "1, -27.465790999999992, 153.03361699999996, 2016-11-22T08:08:53, MOVING\n" +
+                "1, -27.465794999999996, 153.033599, 2016-11-22T08:08:54, MOVING\n" +
+                "1, -27.465800000000005, 153.0336, 2016-11-22T08:08:55, STOPPED\n" +
+                "1, -27.465802, 153.033593, 2016-11-22T08:08:56, STOPPED";
+    }
+
+    public static STStopTrajectory makeMockStopsTrajectory(){
+        STStopTrajectory traj = new STStopTrajectory(false, new ProjectionEquirectangular());
+        final boolean STOPPED = true;
+        final boolean MOVING = false;
+        traj.addGeographic(new double[]{-27.465790999999992, 153.03361699999996},
+                new TimeAndStop(LocalDateTime.of(2016, 11, 22, 8, 8, 53), MOVING));
+
+        traj.addGeographic(new double[]{-27.465794999999996, 153.033599},
+                new TimeAndStop(LocalDateTime.of(2016, 11, 22, 8, 8, 54), MOVING));
+
+        traj.addGeographic(new double[]{-27.465800000000005, 153.0336},
+                new TimeAndStop(LocalDateTime.of(2016, 11, 22, 8, 8, 55), STOPPED));
+
+        traj.addGeographic(new double[]{-27.465802, 153.033593},
+                new TimeAndStop(LocalDateTime.of(2016, 11, 22, 8, 8, 56), STOPPED));
         return traj;
     }
 

@@ -18,6 +18,11 @@ import java.time.LocalDateTime;
 public class MockData {
 
     private static File makeMockDataset(String dataStr){
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         File mockDataset = FileUtil.makeTempFile();
         try {
             FileWriter fw = new FileWriter(mockDataset);

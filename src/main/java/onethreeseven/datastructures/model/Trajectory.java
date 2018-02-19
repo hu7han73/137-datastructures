@@ -57,6 +57,11 @@ public class Trajectory implements ITrajectory<double[]> {
     }
 
     @Override
+    public Iterator<double[]> geoCoordinateIter() {
+        return null;
+    }
+
+    @Override
     public Iterator<double[]> coordinateIter() {
         return iterator();
     }

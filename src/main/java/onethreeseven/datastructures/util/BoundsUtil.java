@@ -67,14 +67,32 @@ public final class BoundsUtil {
 
     /**
      * @param entries     the entries to find the bounds of
-     * @param nDimensions how many dimensions to consider
-     * @return The bounds of all the n-dimensional vectors in the format { {0,100} , {-50, 50} }
+     * @return The bounds of all the n-dimensional vectors in the format { {0,100} , {-50, 50} }.
+     * Where [n][0] is min and [n][1] is max.
      */
-    public static double[][] calculateBounds(Iterator<double[]> entries, int nDimensions) {
-        double[][] currentBounds = boundToOverride(nDimensions);
+    public static double[][] calculateBounds(Iterator<double[]> entries) {
+
+        //[0] is min for that dim and [1] is max for that dim
+        double[][] currentBounds = null;
+
+        if(!entries.hasNext()){
+            return currentBounds;
+        }
+
+        {
+            double[] firstCoord = entries.next();
+            int nDimensions = firstCoord.length;
+            currentBounds = new double[nDimensions][2];
+            //fill it with values that will be overridden
+            for (int n = 0; n < nDimensions; n++) {
+                //so, [0] is min for that dim and [1] is max for that dim
+                currentBounds[n] = new double[]{firstCoord[n], firstCoord[n]};
+            }
+        }
+
         while(entries.hasNext()){
             double[] entry = entries.next();
-            for (int i = 0; i < nDimensions; i++) {
+            for (int i = 0; i < entry.length; i++) {
                 double entryValN = entry[i];
                 //current val smaller than nMin
                 if (entryValN < currentBounds[i][0]) {

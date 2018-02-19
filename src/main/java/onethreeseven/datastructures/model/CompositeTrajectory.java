@@ -10,7 +10,7 @@ import java.util.List;
  * @param <T> the type of the other dimension.
  * @author Luke Bermingham
  */
-class CompositeTrajectory<T extends CompositePt> implements ITrajectory<T> {
+abstract class CompositeTrajectory<T extends CompositePt> implements ITrajectory<T> {
 
     private int nDimensions = 0;
     protected final ArrayList<T> entries;
@@ -49,7 +49,7 @@ class CompositeTrajectory<T extends CompositePt> implements ITrajectory<T> {
             return bounds;
         }
         //cache it for future
-        bounds = BoundsUtil.calculateBounds(this.coordinateIter(), nDimensions);
+        bounds = BoundsUtil.calculateBounds(this.coordinateIter());
         return bounds;
     }
 

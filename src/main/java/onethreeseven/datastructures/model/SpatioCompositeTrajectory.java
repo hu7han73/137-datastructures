@@ -172,4 +172,11 @@ public class SpatioCompositeTrajectory<T extends CompositePt> extends CompositeT
     public AbstractGeographicProjection getProjection() {
         return projection;
     }
+
+    @Override
+    public Iterator<double[]> geoCoordinateIter() {
+        toGeographic();
+        return coordinateIter();
+    }
+
 }

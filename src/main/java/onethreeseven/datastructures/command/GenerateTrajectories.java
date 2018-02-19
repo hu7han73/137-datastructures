@@ -4,6 +4,7 @@ import com.beust.jcommander.Parameter;
 import onethreeseven.datastructures.model.ITrajectory;
 import onethreeseven.datastructures.util.DataGeneratorUtil;
 import onethreeseven.jclimod.CLICommand;
+import onethreeseven.trajsuitePlugin.EntityConsumer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +59,16 @@ public class GenerateTrajectories extends CLICommand {
         speedMetresPerSecond = 10;
         stopDurationMillis = 120000L;
         namingPrefix = "traj_";
+    }
+
+    @Override
+    public boolean shouldStoreRerunAlias() {
+        return true;
+    }
+
+    @Override
+    public String generateRerunAliasBasedOnParams() {
+        return nTrajs + ((nStops > 0) ? "stopping-" : "") + "trajs";
     }
 
     @Override
@@ -162,9 +173,11 @@ public class GenerateTrajectories extends CLICommand {
     }
 
     protected void outputTrajectories(Map<String, ? extends ITrajectory> trajs){
-        ServiceLoader<ITrajectoryOutputConsumer> outputConsumers = ServiceLoader.load(ITrajectoryOutputConsumer.class);
-        for (ITrajectoryOutputConsumer outputConsumer : outputConsumers) {
-            outputConsumer.consume(trajs);
+        ServiceLoader<EntityConsumer> outputConsumers = ServiceLoader.load(EntityConsumer.class);
+        for (EntityConsumer outputConsumer : outputConsumers) {
+            for (Map.Entry<String, ? extends ITrajectory> trajEntry : trajs.entrySet()) {
+                outputConsumer.consume(trajEntry.getKey(), trajEntry.getValue());
+            }
         }
     }
 
@@ -179,7 +192,7 @@ public class GenerateTrajectories extends CLICommand {
     }
 
     @Override
-    public String[] getCommandNameAliases() {
+    public String[] getOtherCommandNames() {
         return new String[]{"generateTrajs", "generateTrajectories"};
     }
 

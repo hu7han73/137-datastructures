@@ -10,6 +10,8 @@ import onethreeseven.datastructures.model.ITrajectory;
 import onethreeseven.geo.projection.AbstractGeographicProjection;
 import onethreeseven.geo.projection.ProjectionEquirectangular;
 import onethreeseven.jclimod.CLICommand;
+import onethreeseven.trajsuitePlugin.EntityConsumer;
+
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -89,6 +91,20 @@ public class LoadTrajectory extends CLICommand {
         stopIndex = -1;
         skipNLines = 1;
         delimiter = ",";
+    }
+
+    @Override
+    public boolean shouldStoreRerunAlias() {
+        return new File(inputTrajPath).exists();
+    }
+
+    @Override
+    public String generateRerunAliasBasedOnParams() {
+        String filename = new File(inputTrajPath).getName();
+        if(filename.contains(".")){
+            return filename.substring(0, filename.lastIndexOf("."));
+        }
+        return filename;
     }
 
     @Override
@@ -203,9 +219,11 @@ public class LoadTrajectory extends CLICommand {
     }
 
     protected void outputTrajectories(Map<String, ? extends ITrajectory> trajs){
-        ServiceLoader<ITrajectoryOutputConsumer> outputConsumers = ServiceLoader.load(ITrajectoryOutputConsumer.class);
-        for (ITrajectoryOutputConsumer outputConsumer : outputConsumers) {
-            outputConsumer.consume(trajs);
+        ServiceLoader<EntityConsumer> outputConsumers = ServiceLoader.load(EntityConsumer.class);
+        for (EntityConsumer outputConsumer : outputConsumers) {
+            for (Map.Entry<String, ? extends ITrajectory> trajEntry : trajs.entrySet()) {
+                outputConsumer.consume(trajEntry.getKey(), trajEntry.getValue());
+            }
         }
     }
 
@@ -220,7 +238,7 @@ public class LoadTrajectory extends CLICommand {
     }
 
     @Override
-    public String[] getCommandNameAliases() {
+    public String[] getOtherCommandNames() {
         return new String[]{"lt", "loadTrajectories"};
     }
 

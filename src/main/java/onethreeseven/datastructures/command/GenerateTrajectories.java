@@ -4,7 +4,7 @@ import com.beust.jcommander.Parameter;
 import onethreeseven.datastructures.model.ITrajectory;
 import onethreeseven.datastructures.util.DataGeneratorUtil;
 import onethreeseven.jclimod.CLICommand;
-import onethreeseven.trajsuitePlugin.EntityConsumer;
+import onethreeseven.trajsuitePlugin.model.EntityConsumer;
 
 import java.util.HashMap;
 import java.util.List;

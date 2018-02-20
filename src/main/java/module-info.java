@@ -1,11 +1,12 @@
 module onethreeseven.datastructures{
 
-    requires onethreeseven.common;
-    requires onethreeseven.geo;
-    requires onethreeseven.jclimod;
-    requires onethreeseven.trajsuitePlugin;
+    requires transitive onethreeseven.common;
+    requires transitive onethreeseven.geo;
+    requires transitive onethreeseven.jclimod;
+    requires transitive onethreeseven.trajsuitePlugin;
     requires jcommander;
     requires java.logging;
+    requires javafx.graphics;
 
     exports onethreeseven.datastructures.algorithm;
     exports onethreeseven.datastructures.data;
@@ -13,9 +14,16 @@ module onethreeseven.datastructures{
     exports onethreeseven.datastructures.model;
     exports onethreeseven.datastructures.util;
     exports onethreeseven.datastructures.command;
+    exports onethreeseven.datastructures.view;
+
+    //so we can run javafx
+    exports onethreeseven.datastructures to javafx.graphics;
+
+    //provide this plug-ins menu to the main program
+    provides onethreeseven.trajsuitePlugin.view.MenuSupplier with onethreeseven.datastructures.view.DataStructuresMenuSupplier;
 
     //uses this interface to provide loaded trajectories to other modules
-    uses onethreeseven.trajsuitePlugin.EntityConsumer;
+    uses onethreeseven.trajsuitePlugin.model.EntityConsumer;
 
     provides onethreeseven.jclimod.AbstractCommandsListing with onethreeseven.datastructures.command.DatastructuresCommandsListing;
 

@@ -10,7 +10,7 @@ import onethreeseven.datastructures.model.ITrajectory;
 import onethreeseven.geo.projection.AbstractGeographicProjection;
 import onethreeseven.geo.projection.ProjectionEquirectangular;
 import onethreeseven.jclimod.CLICommand;
-import onethreeseven.trajsuitePlugin.EntityConsumer;
+import onethreeseven.trajsuitePlugin.model.EntityConsumer;
 
 import java.io.File;
 import java.time.LocalDateTime;

@@ -18,6 +18,8 @@ module onethreeseven.datastructures{
 
     //so we can run javafx
     exports onethreeseven.datastructures to javafx.graphics;
+    exports onethreeseven.datastructures.view.controller to javafx.fxml;
+    opens onethreeseven.datastructures.view.controller to javafx.fxml;
 
     //provide this plug-ins menu to the main program
     provides onethreeseven.trajsuitePlugin.view.MenuSupplier with onethreeseven.datastructures.view.DataStructuresMenuSupplier;

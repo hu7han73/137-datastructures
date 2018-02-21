@@ -27,4 +27,9 @@ public class NumericFieldsResolver extends AbstractStringArrayToFieldResolver<do
         return arr;
     }
 
+    @Override
+    public String toString(){
+        return "Numeric";
+    }
+
 }

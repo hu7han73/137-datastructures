@@ -14,6 +14,7 @@ allprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'java'
     apply plugin: 'application'
+    apply plugin: 'idea'
 }
 
 repositories {
@@ -123,6 +124,14 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
         }
+    }
+}
+
+idea {
+    module {
+        inheritOutputDirs = true
+        downloadJavadoc = true
+        downloadSources = true
     }
 }
 

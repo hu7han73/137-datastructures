@@ -34,4 +34,9 @@ public class IdFieldResolver extends IdResolver {
         }
     }
 
+    @Override
+    public String toString(){
+        return "Id";
+    }
+
 }

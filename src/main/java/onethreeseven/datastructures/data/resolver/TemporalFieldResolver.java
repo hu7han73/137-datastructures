@@ -54,5 +54,9 @@ public class TemporalFieldResolver extends AbstractStringArrayToFieldResolver<Lo
         return sb.toString().trim();
     }
 
+    @Override
+    public String toString(){
+        return "Time";
+    }
 
 }

@@ -4,9 +4,7 @@ package onethreeseven.datastructures.data.resolver;
  * Resolve the string "STOPPED" to true and anything else to false.
  * @author Luke Bermingham
  */
-public class StopFieldResolver implements IResolver<String[], Boolean> {
-
-    private final int arrIdx;
+public class StopFieldResolver extends AbstractStringArrayToFieldResolver<Boolean> {
 
     /**
      * The string to that is checked against to indicate a stop.
@@ -21,7 +19,7 @@ public class StopFieldResolver implements IResolver<String[], Boolean> {
      * @param isStoppedString The isStoppedString to match against, for example: "STOPPED".
      */
     public StopFieldResolver(int arrIdx, String isStoppedString){
-        this.arrIdx = arrIdx;
+        super(arrIdx);
         this.isStoppedString = isStoppedString.toUpperCase();
     }
 
@@ -36,7 +34,13 @@ public class StopFieldResolver implements IResolver<String[], Boolean> {
 
     @Override
     public Boolean resolve(String[] in) {
-        String stopMoveStr = in[arrIdx].trim().toUpperCase();
+        String stopMoveStr = in[resolutionIndices[0]].trim().toUpperCase();
         return stopMoveStr.equals(isStoppedString);
     }
+
+    @Override
+    public String toString(){
+        return "Stop/Move";
+    }
+
 }

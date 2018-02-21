@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="onethreeseven.datastructures.view.controller.LoadTrajectoryViewController">
+   <bottom>
+      <ButtonBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: DIMGREY;" BorderPane.alignment="CENTER">
+        <buttons>
+          <Button fx:id="loadBtn" disable="true" mnemonicParsing="false" text="Load" />
+        </buttons>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </ButtonBar>
+   </bottom>
+   <top>
+      <GridPane BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Trajectory file:" GridPane.halignment="LEFT" />
+            <Button fx:id="openTrajBtn" mnemonicParsing="false" onAction="#onOpenTrajClicked" text="Select File..." GridPane.columnIndex="1" GridPane.halignment="LEFT" />
+            <Label fx:id="filenameLabel" style="-fx-background-color: GAINSBORO;" text="No file selected" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.vgrow="ALWAYS" />
+            <Label text="Delimiter:" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+            <TextField fx:id="delimiterLabel" alignment="CENTER" maxWidth="20.0" minWidth="20.0" prefColumnCount="10" prefWidth="20.0" promptText="Usually comma or semi-colon" text="," GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1" />
+            <Label text="Skip first n-lines:" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+            <Spinner fx:id="nLinesSkipSpinner" maxWidth="50.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
+      </GridPane>
+   </top>
+   <center>
+      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <BorderPane prefHeight="200.0" prefWidth="200.0">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+               <center>
+                  <GridPane fx:id="dataFieldsGrid" BorderPane.alignment="CENTER">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                  </GridPane>
+               </center>
+               <top>
+                  <GridPane BorderPane.alignment="CENTER">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                      <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                    </rowConstraints>
+                     <children>
+                        <Label alignment="TOP_CENTER" style="-fx-font-weight: bold;" text="Field" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                        <Label fx:id="trajSplitLabel" style="-fx-background-color: GAINSBORO;" text="No trajectory line to split yet." textOverrun="CENTER_ELLIPSIS" GridPane.columnSpan="3" GridPane.halignment="CENTER" />
+                        <Label style="-fx-font-weight: bold;" text="Field Type" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                        <Label style="-fx-font-weight: bold;" text="Valid?" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                        <Separator prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+                     </children>
+                  </GridPane>
+               </top>
+            </BorderPane>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

@@ -20,6 +20,18 @@ public class IdFieldResolver extends IdResolver {
     }
 
     @Override
+    public String getCommandParamString() {
+        StringBuilder sb = new StringBuilder(" -id ");
+        for (int i = 0; i < resolutionIndices.length; i++) {
+            sb.append(String.valueOf(resolutionIndices[i]));
+            if(i != resolutionIndices.length - 1){
+                sb.append(",");
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
     public String resolve(String[] fields) {
         if(resolutionIndices.length > 1){
             for (int resolutionIndice : resolutionIndices) {

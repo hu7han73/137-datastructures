@@ -69,4 +69,9 @@ public class STStopTrajectoryParser extends AbstractTrajectoryParser<STStopTraje
         traj.addGeographic(coords, new TimeAndStop(time, isStop));
     }
 
+    @Override
+    protected String getCommandStringParams() {
+        return temporalFieldResolver.getCommandParamString() + stopFieldResolver.getCommandParamString();
+    }
+
 }

@@ -28,4 +28,9 @@ public class SameIdResolver extends IdResolver {
     public String getId() {
         return id;
     }
+
+    @Override
+    public String getCommandParamString() {
+        return " -id $" + id;
+    }
 }

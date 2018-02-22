@@ -21,4 +21,13 @@ public abstract class AbstractStringArrayToFieldResolver<T> implements IResolver
         this.resolutionIndices = arrIndices;
     }
 
+    public int[] getResolutionIndices() {
+        //defensive copy
+        int[] copy = new int[resolutionIndices.length];
+        System.arraycopy(resolutionIndices, 0, copy, 0, resolutionIndices.length);
+        return copy;
+    }
+
+    public abstract String getCommandParamString();
+
 }

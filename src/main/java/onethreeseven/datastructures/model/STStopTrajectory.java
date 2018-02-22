@@ -30,8 +30,8 @@ public class STStopTrajectory extends SpatioCompositeTrajectory<STStopPt> {
         super.addCartesian(new STStopPt(coords, timeAndStop));
     }
 
-    public void addGeographic(double[] coords, TimeAndStop timeAndStop){
-        super.addGeographic(new STStopPt(coords, timeAndStop));
+    public void addGeographic(double[] latlon, TimeAndStop timeAndStop){
+        super.addGeographic(new STStopPt(latlon, timeAndStop));
     }
 
 }

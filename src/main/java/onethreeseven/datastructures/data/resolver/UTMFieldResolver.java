@@ -28,4 +28,9 @@ public class UTMFieldResolver extends AbstractStringArrayToFieldResolver<double[
         double[] latlon = utmProjection.cartesianToGeographic(new double[]{easting, northing});
         return desiredProjection.geographicToCartesian(latlon[0], latlon[1]);
     }
+
+    @Override
+    public String getCommandParamString() {
+        throw new UnsupportedOperationException("UTM resolving not yet supported in load trajectory CLI.");
+    }
 }

@@ -163,6 +163,35 @@ public abstract class AbstractTrajectoryParser<T extends ITrajectory> extends Ab
         return null;
     }
 
+    @Override
+    public Map<String, T> parse(File dataset) {
+        return super.parse(dataset);
+    }
+
+    /**
+     * @return The string the execute this trajectory parsing command through CLI.
+     */
+    public String getCommandString(File trajFile){
+        StringBuilder sb = new StringBuilder();
+        sb.append("lt ");
+        sb.append(" -i ");
+        sb.append(trajFile.getAbsolutePath());
+        sb.append(idResolver.getCommandParamString());
+        sb.append(numericFieldsResolver.getCommandParamString());
+        sb.append(getCommandStringParams());
+        sb.append(" -n ");
+        sb.append(String.valueOf(nLinesToSkip));
+        sb.append(" -d ");
+        sb.append(delimiter);
+        return sb.toString();
+    }
+
+    /**
+     *
+     * @return The unique CLI params of the implementing parser.
+     */
+    protected abstract String getCommandStringParams();
+
     public AbstractTrajectoryParser<T> setNumericFieldsResolver(NumericFieldsResolver numericFieldsResolver) {
         this.numericFieldsResolver = numericFieldsResolver;
         return this;

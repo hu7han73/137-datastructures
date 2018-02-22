@@ -7,6 +7,7 @@ module onethreeseven.datastructures{
     requires jcommander;
     requires java.logging;
     requires javafx.graphics;
+    requires java.prefs;
 
     exports onethreeseven.datastructures.algorithm;
     exports onethreeseven.datastructures.data;

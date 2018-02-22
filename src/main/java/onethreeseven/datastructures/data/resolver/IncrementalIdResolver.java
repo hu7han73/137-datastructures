@@ -18,4 +18,9 @@ public class IncrementalIdResolver extends IdResolver {
         id++;
         return res;
     }
+
+    @Override
+    public String getCommandParamString() {
+        return " -id ++";
+    }
 }

@@ -37,6 +37,11 @@ public class TrajectoryParser extends AbstractTrajectoryParser<Trajectory> {
     }
 
     @Override
+    protected String getCommandStringParams() {
+        throw new UnsupportedOperationException("The load trajectory cli command does not support loading purely numerical trajectories yet.");
+    }
+
+    @Override
     public TrajectoryParser setNumericFieldsResolver(NumericFieldsResolver numericFieldsResolver) {
         super.setNumericFieldsResolver(numericFieldsResolver);
         return this;

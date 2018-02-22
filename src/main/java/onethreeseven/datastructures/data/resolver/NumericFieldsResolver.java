@@ -6,12 +6,29 @@ package onethreeseven.datastructures.data.resolver;
  */
 public class NumericFieldsResolver extends AbstractStringArrayToFieldResolver<double[]> {
 
+    private final String commandString;
+
+    public NumericFieldsResolver(LatFieldResolver latFieldResolver, LonFieldResolver lonFieldResolver){
+        super(new int[]{latFieldResolver.resolutionIndices[0], lonFieldResolver.resolutionIndices[0]});
+        this.commandString = " -ll " + latFieldResolver.resolutionIndices[0] + " " + lonFieldResolver.resolutionIndices[0];
+    }
+
     public NumericFieldsResolver(int idx) {
         super(idx);
+        commandString = null;
     }
 
     public NumericFieldsResolver(int... indices){
         super(indices);
+        commandString = null;
+    }
+
+    @Override
+    public String getCommandParamString() {
+        if(commandString == null){
+            throw new IllegalStateException("Cannot make command string did not use lat lon constructor.");
+        }
+        return commandString;
     }
 
     @Override

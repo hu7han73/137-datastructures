@@ -69,6 +69,11 @@ public class STTrajectoryParser extends AbstractTrajectoryParser<STTrajectory> {
         traj.addGeographic(coords, t);
     }
 
+    @Override
+    protected String getCommandStringParams() {
+        return temporalFieldResolver.getCommandParamString();
+    }
+
     public STTrajectoryParser setProjection(AbstractGeographicProjection projection) {
         this.projection = projection;
         return this;

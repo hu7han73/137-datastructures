@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -252,24 +253,36 @@ public class LoadTrajectory extends CLICommand {
         final AbstractGeographicProjection projection = new ProjectionEquirectangular();
         final boolean inCartesianMode = false;
 
+        AbstractTrajectoryParser<? extends ITrajectory> parser;
+
         if(temporalFieldResolver == null){
-            return new SpatialTrajectoryParser(idResolver, latlonResolver, projection, inCartesianMode);
+            parser = new SpatialTrajectoryParser(idResolver, latlonResolver, projection, inCartesianMode);
         }
+        else if(stopIndex == -1){
 
-        if(stopIndex == -1){
-
-            return new STTrajectoryParser(
+            parser = new STTrajectoryParser(
                     new ProjectionEquirectangular(),
                     idResolver,
                     latlonResolver,
                     temporalFieldResolver, inCartesianMode);
-        } else{
-            return new STStopTrajectoryParser(new ProjectionEquirectangular(),
+        }
+        else {
+            parser = new STStopTrajectoryParser(new ProjectionEquirectangular(),
                     idResolver,
                     latlonResolver,
                     temporalFieldResolver,
                     new StopFieldResolver(stopIndex), inCartesianMode);
         }
+
+        if(customProgressListener != null){
+            parser.setProgressListener(customProgressListener);
+        }
+        return parser;
     }
 
+    private Consumer<Double> customProgressListener = null;
+
+    public void setCustomProgressListener(Consumer<Double> customProgressListener) {
+        this.customProgressListener = customProgressListener;
+    }
 }

@@ -33,6 +33,11 @@ public class StopFieldResolver extends AbstractStringArrayToFieldResolver<Boolea
     }
 
     @Override
+    public String getCommandParamString() {
+        return " -s " + resolutionIndices[0];
+    }
+
+    @Override
     public Boolean resolve(String[] in) {
         String stopMoveStr = in[resolutionIndices[0]].trim().toUpperCase();
         return stopMoveStr.equals(isStoppedString);

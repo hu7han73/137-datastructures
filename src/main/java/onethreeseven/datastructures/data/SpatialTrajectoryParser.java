@@ -51,6 +51,11 @@ public class SpatialTrajectoryParser extends AbstractTrajectoryParser<SpatialTra
         traj.addGeographic(coords);
     }
 
+    @Override
+    protected String getCommandStringParams() {
+        return "";
+    }
+
     public SpatialTrajectoryParser setProjection(AbstractGeographicProjection projection) {
         this.projection = projection;
         return this;

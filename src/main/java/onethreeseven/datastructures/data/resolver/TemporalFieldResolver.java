@@ -35,6 +35,18 @@ public class TemporalFieldResolver extends AbstractStringArrayToFieldResolver<Lo
     }
 
     @Override
+    public String getCommandParamString() {
+        StringBuilder sb = new StringBuilder(" -t ");
+        for (int i = 0; i < resolutionIndices.length; i++) {
+            sb.append(String.valueOf(resolutionIndices[i]));
+            if(i != resolutionIndices.length - 1){
+                sb.append(" ");
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
     public LocalDateTime resolve(String[] in) {
         String combinedTimeStamps = combineTimeStamps(in);
         return this.textToDateTimeParser.apply(combinedTimeStamps);

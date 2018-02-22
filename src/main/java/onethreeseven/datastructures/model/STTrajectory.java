@@ -37,7 +37,7 @@ public class STTrajectory extends SpatioCompositeTrajectory<STPt> {
         return dist/(deltaTimeMillis/1000.0);
     }
 
-    public void addGeographic(double[] coords, LocalDateTime time) {
-        this.addGeographic(new STPt(coords, time));
+    public void addGeographic(double[] latlon, LocalDateTime time) {
+        this.addGeographic(new STPt(latlon, time));
     }
 }

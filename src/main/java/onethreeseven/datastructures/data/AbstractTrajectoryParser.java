@@ -169,6 +169,7 @@ public abstract class AbstractTrajectoryParser<T extends ITrajectory> extends Ab
     }
 
     /**
+     * @param trajFile The trajectory file to try and load.
      * @return The string the execute this trajectory parsing command through CLI.
      */
     public String getCommandString(File trajFile){

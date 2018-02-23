@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import onethreeseven.trajsuitePlugin.model.AbstractTrajSuiteProgram;
+import onethreeseven.trajsuitePlugin.model.BaseTrajSuiteProgram;
 import onethreeseven.trajsuitePlugin.view.AbstractMenuBarPopulator;
 import onethreeseven.trajsuitePlugin.view.MenuSupplier;
 import onethreeseven.trajsuitePlugin.view.TrajSuiteMenu;
@@ -22,7 +22,7 @@ import java.net.URL;
 public class DataStructuresMenuSupplier implements MenuSupplier {
 
     @Override
-    public void supplyMenus(AbstractMenuBarPopulator populator, AbstractTrajSuiteProgram program) {
+    public void supplyMenus(AbstractMenuBarPopulator populator, BaseTrajSuiteProgram program) {
 
         TrajSuiteMenu fileMenu = new TrajSuiteMenu("File");
         TrajSuiteMenu loadSubMenu = new TrajSuiteMenu("Load");

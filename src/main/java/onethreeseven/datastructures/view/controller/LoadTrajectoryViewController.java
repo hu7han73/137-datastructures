@@ -204,6 +204,7 @@ public class LoadTrajectoryViewController {
         return idResolver;
     }
 
+    @SuppressWarnings("unchecked")
     private boolean otherResolverValid(String[] fields,
                                        int fieldIdx,
                                        AbstractStringArrayToFieldResolver resolver,
@@ -219,6 +220,7 @@ public class LoadTrajectoryViewController {
         else if(resolver instanceof StopFieldResolver){
             stopMoveResolvers.add((StopFieldResolver) resolver);
         }
+
 
         Object resolvedValue = resolver.resolve(fields);
         if(resolvedValue != null){
@@ -408,6 +410,7 @@ public class LoadTrajectoryViewController {
                 );
     }
 
+    @FXML
     public void onLoadTrajClicked(ActionEvent actionEvent) {
         if(trajFile != null && parser != null){
 
@@ -431,6 +434,7 @@ public class LoadTrajectoryViewController {
                 });
                 program.doCommand(commandString);
 
+                //done now, close the window
                 Platform.runLater(()->{
                     //close the window we are done here
                     Stage stage = (Stage) loadBtn.getScene().getWindow();

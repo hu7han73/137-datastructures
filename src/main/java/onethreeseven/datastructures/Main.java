@@ -1,8 +1,7 @@
 package onethreeseven.datastructures;
 
 import javafx.stage.Stage;
-import onethreeseven.jclimod.CLIProgram;
-import onethreeseven.trajsuitePlugin.model.AbstractTrajSuiteProgram;
+import onethreeseven.trajsuitePlugin.model.BaseTrajSuiteProgram;
 import onethreeseven.trajsuitePlugin.view.BasicFxApplication;
 
 /**
@@ -13,14 +12,8 @@ public class Main extends BasicFxApplication {
 
 
     @Override
-    protected AbstractTrajSuiteProgram preStart(Stage stage) {
-        return new AbstractTrajSuiteProgram() {
-            final CLIProgram program = new CLIProgram();
-            @Override
-            public CLIProgram getCLI() {
-                return program;
-            }
-        };
+    protected BaseTrajSuiteProgram preStart(Stage stage) {
+        return new BaseTrajSuiteProgram();
     }
 
     @Override

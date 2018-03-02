@@ -213,12 +213,17 @@ public class LoadTrajectory extends CLICommand {
 
     @Override
     protected boolean runImpl() {
-        AbstractTrajectoryParser<? extends ITrajectory> parser = makeTrajectoryParser();
-        parser.setnLinesToSkip(skipNLines);
-        parser.setDelimiter(delimiter);
-        Map<String, ? extends ITrajectory> out = parser.parse(new File(inputTrajPath));
-        outputTrajectories(out);
-        return true;
+        try{
+            AbstractTrajectoryParser<? extends ITrajectory> parser = makeTrajectoryParser();
+            parser.setnLinesToSkip(skipNLines);
+            parser.setDelimiter(delimiter);
+            Map<String, ? extends ITrajectory> out = parser.parse(new File(inputTrajPath));
+            outputTrajectories(out);
+            return true;
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+        }
+        return false;
     }
 
     protected void outputTrajectories(Map<String, ? extends ITrajectory> trajs){

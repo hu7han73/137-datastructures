@@ -17,6 +17,7 @@ import onethreeseven.datastructures.data.SpatialTrajectoryParser;
 import onethreeseven.datastructures.data.resolver.*;
 import onethreeseven.geo.projection.*;
 import onethreeseven.jclimod.CLIProgram;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -28,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
@@ -433,11 +437,13 @@ public class LoadTrajectoryViewController {
             //get the cli command from the parser we have gone to so much effort to make
             String[] commandString = parser.getCommandString(trajFile.getAbsoluteFile()).split(" ");
 
-            doLoadTrajCommand(commandString);
+            Consumer<Throwable> onFail = this::showFailedDialog;
+
+            doLoadTrajCommand(commandString, onFail);
         }
     }
 
-    private void doLoadTrajCommand(String[] commandString){
+    private void doLoadTrajCommand(String[] commandString, Consumer<Throwable> onFail){
 
         //run on a different thread
 
@@ -454,7 +460,7 @@ public class LoadTrajectoryViewController {
                     progressBar.setProgress(percentComplete);
                 });
             });
-            program.doCommand(commandString);
+            boolean success = program.doCommand(commandString);
 
             //done now, close the window
             Platform.runLater(()->{
@@ -463,15 +469,49 @@ public class LoadTrajectoryViewController {
                 stage.close();
             });
 
+            if(!success){
+                onFail.accept(null);
+            }
+
+        }).exceptionally(new Function<Throwable, Void>() {
+            @Override
+            public Void apply(Throwable throwable) {
+                onFail.accept(throwable);
+                return null;
+            }
         });
 
+
+    }
+
+    private void showFailedDialog(Throwable throwable){
+        Platform.runLater(()->{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText(null);
+            alert.setTitle("Error - Failed Loading Trajectory");
+            alert.setContentText("Failed to load trajectory: " +
+                    (throwable == null ? "" : throwable.getMessage()));
+            alert.showAndWait();
+        });
     }
 
     public void onReloadRecent(ActionEvent actionEvent) {
         String selectedRerunAlias = recentConfigChoiceBox.getSelectionModel().getSelectedItem();
         if(selectedRerunAlias != null){
             String[] commandsString = new String[]{"lt", "-rr", selectedRerunAlias};
-            doLoadTrajCommand(commandsString);
+
+            //make our on fail command
+            Consumer<Throwable> onFail = throwable -> {
+                //remove that alias if it failed
+                new LoadTrajectory().removeRerunAlias(selectedRerunAlias);
+                //also remove that alias from the choices of aliases in the drop down
+                Platform.runLater(()->{
+                    recentConfigChoiceBox.getItems().remove(selectedRerunAlias);
+                });
+                showFailedDialog(throwable);
+            };
+
+            doLoadTrajCommand(commandsString, onFail);
         }
     }
 }

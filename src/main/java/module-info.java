@@ -1,9 +1,9 @@
 module onethreeseven.datastructures{
 
-    requires transitive onethreeseven.common;
     requires transitive onethreeseven.geo;
     requires transitive onethreeseven.jclimod;
     requires transitive onethreeseven.trajsuitePlugin;
+    requires onethreeseven.common;
     requires jcommander;
     requires java.logging;
     requires javafx.graphics;

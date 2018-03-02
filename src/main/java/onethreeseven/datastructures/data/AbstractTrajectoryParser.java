@@ -36,18 +36,14 @@ public abstract class AbstractTrajectoryParser<T extends ITrajectory> extends Ab
     @Override
     protected void parseLine(String line) {
         String[] lineParts = line.split(this.delimiter);
-        try{
-            double[] coordinates = numericFieldsResolver.resolve(lineParts);
-            String id = idResolver.resolve(lineParts);
-            T t = output.get(id);
-            if(t == null){
-                t = makeNewTrajectory();
-                output.put(id, t);
-            }
-            addCoordinates(t, coordinates, lineParts);
-        }catch (Exception e){
-            e.printStackTrace();
+        double[] coordinates = numericFieldsResolver.resolve(lineParts);
+        String id = idResolver.resolve(lineParts);
+        T t = output.get(id);
+        if(t == null){
+            t = makeNewTrajectory();
+            output.put(id, t);
         }
+        addCoordinates(t, coordinates, lineParts);
     }
 
     @Override
@@ -109,7 +105,8 @@ public abstract class AbstractTrajectoryParser<T extends ITrajectory> extends Ab
                         try {
                             br.close();
                             streamOpen = false;
-                        } catch (IOException e) {
+                        }
+                        catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
@@ -164,7 +161,7 @@ public abstract class AbstractTrajectoryParser<T extends ITrajectory> extends Ab
     }
 
     @Override
-    public Map<String, T> parse(File dataset) {
+    public Map<String, T> parse(File dataset) throws IOException {
         return super.parse(dataset);
     }
 

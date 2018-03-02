@@ -1,12 +1,13 @@
 package onethreeseven.datastructures.data;
 
-import onethreeseven.datastructures.data.resolver.IdFieldResolver;
-import onethreeseven.datastructures.data.resolver.NumericFieldsResolver;
-import onethreeseven.datastructures.data.resolver.SameIdResolver;
+import onethreeseven.datastructures.data.resolver.*;
 import onethreeseven.datastructures.model.STPt;
 import onethreeseven.datastructures.model.STTrajectory;
+import onethreeseven.datastructures.model.SpatialTrajectory;
 import onethreeseven.datastructures.model.Trajectory;
 import onethreeseven.datastructures.util.DataGeneratorUtil;
+import onethreeseven.geo.projection.AbstractGeographicProjection;
+import onethreeseven.geo.projection.ProjectionEquirectangular;
 import onethreeseven.geo.projection.ProjectionMercator;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,29 +29,27 @@ public class TrajectoryDatasetParserTest {
 
     private static final Logger logger = Logger.getLogger(TrajectoryDatasetParserTest.class.getSimpleName());
 
+    private static final AbstractGeographicProjection projection = new ProjectionEquirectangular();
+
     @Test
     public void testParseEasyDataset() throws Exception {
         File dataset = MockData.makeEasyDataset();
-        Map<String, Trajectory> trajectories = new TrajectoryParser(
+
+        Map<String, Trajectory> parsedTrajs = new TrajectoryParser(
                 new IdFieldResolver(0),
                 new NumericFieldsResolver(1,2)).setnLinesToSkip(1).parse(dataset);
         dataset.deleteOnExit();
 
-        Assert.assertTrue("Easy data-set should have a trajectory with id '1'", trajectories.containsKey("1"));
+        Assert.assertTrue("Easy data-set should have a trajectory with id '1'", parsedTrajs.containsKey("1"));
 
-        double[][] pts = new double[][]{
-                new double[]{137, 137},
-                new double[]{15, 10},
-                new double[]{0, 10},
-                new double[]{-10, 5},
-                new double[]{0, 0}
-        };
+        SpatialTrajectory expectedTraj = MockData.makeMockSpatialOnlyTrajectory();
+
 
         //Check points are exactly as expected
-        Trajectory trajectory = trajectories.get("1");
-        for (int i = 0; i < pts.length; i++) {
-            double[] actual = trajectory.get(i);
-            double[] expected = pts[i];
+        Trajectory actualTraj = parsedTrajs.get("1");
+        for (int i = 0; i < expectedTraj.size(); i++) {
+            double[] actual = actualTraj.get(i);
+            double[] expected = expectedTraj.get(i).getCoords();
             Assert.assertArrayEquals(expected, actual, 1e-7);
         }
     }
@@ -59,50 +58,40 @@ public class TrajectoryDatasetParserTest {
     public void testParseSampleTrucks() throws URISyntaxException {
         File dataset = MockData.makeTrucksDataset();
 
-        ProjectionMercator projection = new ProjectionMercator();
-
-        STTrajectoryParser parser = new STTrajectoryParser(4,5,2,3)
-                .setIdResolver(new IdFieldResolver(0))
+        STTrajectoryParser parser = new STTrajectoryParser(
+                projection,
+                new IdFieldResolver(0),
+                new LatFieldResolver(5),
+                new LonFieldResolver(4),
+                new TemporalFieldResolver(2,3),
+                true)
                 .setnLinesToSkip(1)
-                .setDelimiter(";")
-                .setProjection(projection)
-                .setInCartesianMode(true);
-
-
+                .setDelimiter(";");
 
         Map<String, STTrajectory> trajectories = parser.parse(dataset);
 
         dataset.deleteOnExit();
 
         //0862;1;10/09/2002;09:15:59;23.845089;38.018470;486253.80;4207588.10
-        STTrajectory traj = trajectories.get("0862");
-        Assert.assertTrue(traj != null);
+        STTrajectory actualTraj = trajectories.get("0862");
+        Assert.assertTrue(actualTraj != null);
 
         //make the pts, same order as they are loaded t,lat,lon
-        double[][] expectedCoords = new double[][]{
-                projection.geographicToCartesian(23.845089, 38.018470),
-                projection.geographicToCartesian(23.845179, 38.018069),
-                projection.geographicToCartesian(23.8455300, 38.018241),
-        };
+        STTrajectory expectedTraj = MockData.makeMockTrucksTrajectory();
 
-        LocalDateTime[] expectedTimes = new LocalDateTime[]{
-                LocalDateTime.of(2002, 9, 10, 9, 15, 59),
-                LocalDateTime.of(2002, 9, 10, 9, 16, 29),
-                LocalDateTime.of(2002, 9, 10, 9, 17, 30)
-        };
-
-        compareActualExpectedSTTrajectory(traj, expectedCoords, expectedTimes);
+        compareActualExpectedSTTrajectory(actualTraj, expectedTraj);
     }
 
     @Test
     public void testParseSampleGeolife() throws URISyntaxException {
         File dataset = MockData.makeGeolifeDataset();
-        ProjectionMercator projection = new ProjectionMercator();
 
-        STTrajectoryParser parser = new STTrajectoryParser(0,1,5,6)
-                .setIdResolver(new IdFieldResolver(2))
-                .setProjection(projection)
-                .setInCartesianMode(true);
+        STTrajectoryParser parser = new STTrajectoryParser(projection,
+                new IdFieldResolver(2),
+                new LatFieldResolver(0),
+                new LonFieldResolver(1),
+                new TemporalFieldResolver(5,6),
+                true);
 
         Map<String, STTrajectory> trajectories = parser.parse(dataset);
 
@@ -111,31 +100,27 @@ public class TrajectoryDatasetParserTest {
         Assert.assertTrue("Geolife data-set should have a trajectory with id '0'", trajectories.containsKey("0"));
 
         //make the pts, same order as they are loaded t,lat,lon
-        double[][] pts = new double[][]{
-                projection.geographicToCartesian(39.9764666666667, 116.330066666667),
-                projection.geographicToCartesian(39.9764, 116.33015)
-        };
-
-        LocalDateTime[] times = new LocalDateTime[]{
-                LocalDateTime.of(2007, 4, 12, 10, 21, 16),
-                LocalDateTime.of(2007, 4, 12, 10, 21, 22)
-        };
+        STTrajectory expectedTraj = MockData.makeMockGeolifeTrajectory();
 
         //Check points are exactly as expected
-        STTrajectory trajectory = trajectories.get("0");
-        compareActualExpectedSTTrajectory(trajectory, pts, times);
+        STTrajectory actualTraj = trajectories.values().iterator().next();
+        compareActualExpectedSTTrajectory(actualTraj, expectedTraj);
     }
 
-    private void compareActualExpectedSTTrajectory(STTrajectory trajectory,
-                                                   double[][] expectedCoords,
-                                                   LocalDateTime[] expectedTimes){
+    private void compareActualExpectedSTTrajectory(STTrajectory actualTraj,
+                                                   STTrajectory expectTraj){
 
-        for (int i = 0; i < expectedCoords.length; i++) {
-            double[] actualXY = trajectory.get(i).getCoords();
-            double[] expectedXY = expectedCoords[i];
-            LocalDateTime actualTime = trajectory.get(i).getTime();
-            LocalDateTime expectedTime = expectedTimes[i];
-            Assert.assertArrayEquals(expectedXY, actualXY, 1e-7);
+        actualTraj.toGeographic();
+        expectTraj.toGeographic();
+
+        Assert.assertTrue(actualTraj.size() == expectTraj.size());
+
+        for (int i = 0; i < expectTraj.size(); i++) {
+            double[] actualXY = actualTraj.get(i).getCoords();
+            double[] expectedXY = expectTraj.get(i).getCoords();
+            LocalDateTime actualTime = actualTraj.getTime(i);
+            LocalDateTime expectedTime = expectTraj.getTime(i);
+            Assert.assertArrayEquals(expectedXY, actualXY, 1e-2);
             Assert.assertTrue(ChronoUnit.SECONDS.between(actualTime, expectedTime) == 0);
         }
     }
@@ -198,10 +183,13 @@ public class TrajectoryDatasetParserTest {
         //
         // 3 - Parse
         //
-        STTrajectoryParser parser = new STTrajectoryParser(1,2,3)
-                .setDelimiter(delimiter)
-                .setInCartesianMode(inCartesianMode)
-                .setIdResolver(new IdFieldResolver(0));
+        STTrajectoryParser parser = new STTrajectoryParser(projection,
+                new IdFieldResolver(0),
+                new LatFieldResolver(1),
+                new LonFieldResolver(2),
+                new TemporalFieldResolver(3),
+                inCartesianMode)
+                .setDelimiter(delimiter);
 
         Map<String, STTrajectory> actual = parser.parse(f);
         logger.info("Finished parsing the trajectory file.");
@@ -252,10 +240,13 @@ public class TrajectoryDatasetParserTest {
         //
         // 3 - Parse and Iterate
         //
-        STTrajectoryParser parser = new STTrajectoryParser(1,2,3)
-                .setDelimiter(delimiter)
-                .setInCartesianMode(inCartesianMode)
-                .setIdResolver(new IdFieldResolver(0));
+        STTrajectoryParser parser = new STTrajectoryParser(projection,
+                new IdFieldResolver(0),
+                new LatFieldResolver(1),
+                new LonFieldResolver(2),
+                new TemporalFieldResolver(3),
+                inCartesianMode)
+                .setDelimiter(delimiter);
 
         Iterator<Map.Entry<String, STTrajectory>> iter = parser.iterator(f);
 

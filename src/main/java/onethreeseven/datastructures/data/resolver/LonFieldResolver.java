@@ -6,8 +6,8 @@ package onethreeseven.datastructures.data.resolver;
  */
 public class LonFieldResolver extends AbstractStringArrayToFieldResolver<Double> {
 
-    public LonFieldResolver(int latIdx) {
-        super(latIdx);
+    public LonFieldResolver(int lonIdx) {
+        super(lonIdx);
     }
 
     @Override

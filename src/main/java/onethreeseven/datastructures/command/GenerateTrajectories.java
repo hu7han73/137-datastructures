@@ -173,10 +173,13 @@ public class GenerateTrajectories extends CLICommand {
     }
 
     protected void outputTrajectories(Map<String, ? extends ITrajectory> trajs){
+
+        String layername = generateRerunAliasBasedOnParams();
+
         ServiceLoader<EntityConsumer> outputConsumers = ServiceLoader.load(EntityConsumer.class);
         for (EntityConsumer outputConsumer : outputConsumers) {
             for (Map.Entry<String, ? extends ITrajectory> trajEntry : trajs.entrySet()) {
-                outputConsumer.consume(trajEntry.getKey(), trajEntry.getValue());
+                outputConsumer.consume(layername, trajEntry.getKey(), trajEntry.getValue());
             }
         }
     }

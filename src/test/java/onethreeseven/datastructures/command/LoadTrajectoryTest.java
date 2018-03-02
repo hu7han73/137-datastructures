@@ -32,6 +32,11 @@ public class LoadTrajectoryTest {
             protected void outputTrajectories(Map<String, ? extends ITrajectory> trajs) {
                 output = trajs;
             }
+
+            @Override
+            public boolean shouldStoreRerunAlias() {
+                return false;
+            }
         });
         trucksFile = MockData.makeTrucksDataset();
         geolifeFile = MockData.makeGeolifeDataset();
@@ -151,8 +156,8 @@ public class LoadTrajectoryTest {
     private void compareStops(STStopTrajectory actual, STStopTrajectory expected){
         Assert.assertEquals(expected.size(), actual.size());
 
-        actual.toGeographic();
-        expected.toGeographic();
+        //actual.toGeographic();
+        //expected.toGeographic();
 
         for (int i = 0; i < expected.size(); i++) {
             STStopPt actualPt = actual.get(i);
@@ -164,8 +169,8 @@ public class LoadTrajectoryTest {
     private void compareTimes(SpatioCompositeTrajectory<? extends STPt> actual, SpatioCompositeTrajectory<? extends STPt> expected){
         Assert.assertEquals(expected.size(), actual.size());
 
-        actual.toGeographic();
-        expected.toGeographic();
+        //actual.toGeographic();
+        //expected.toGeographic();
 
         for (int i = 0; i < expected.size(); i++) {
             STPt actualPt = actual.get(i);

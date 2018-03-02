@@ -127,7 +127,7 @@ public final class DataGeneratorUtil {
      */
     public static Map<String, STTrajectory> generateSpatiotemporalTrajectories(int nTrajectories){
         return generateSpatiotemporalTrajectories(new double[][]{
-                new double[]{-180, 180},
+                new double[]{-90, 90},
                 new double[]{-90, 90}
         }, System.currentTimeMillis(), nTrajectories, false, () -> 3000);
     }

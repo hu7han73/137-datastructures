@@ -1,5 +1,7 @@
 package onethreeseven.datastructures.model;
 
+import onethreeseven.trajsuitePlugin.model.BoundingCoordinates;
+
 /**
  * Interface for the various kinds of trajectories.
  * @param <T> The type of entries in this trajectory.

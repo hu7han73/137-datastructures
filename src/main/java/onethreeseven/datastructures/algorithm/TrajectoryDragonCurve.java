@@ -2,7 +2,8 @@ package onethreeseven.datastructures.algorithm;
 
 
 import onethreeseven.datastructures.model.Trajectory;
-import onethreeseven.datastructures.util.BoundsUtil;
+import onethreeseven.trajsuitePlugin.util.BoundsUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

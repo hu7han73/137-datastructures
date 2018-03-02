@@ -34,7 +34,7 @@ public class SpatialTrajectory extends SpatioCompositeTrajectory<SpatialTrajecto
         super.addGeographic(new SpatialPt(geo));
     }
 
-    class SpatialPt extends CompositePt<Object>{
+    public class SpatialPt extends CompositePt<Object>{
         private static final String extraStringified = "";
 
         SpatialPt(double[] coords) {

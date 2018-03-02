@@ -1,6 +1,7 @@
 package onethreeseven.datastructures.model;
 
-import onethreeseven.datastructures.util.BoundsUtil;
+import onethreeseven.trajsuitePlugin.util.BoundsUtil;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

@@ -31,7 +31,7 @@ import java.util.function.Function;
  */
 public class LoadTrajectory extends CLICommand {
 
-    @Parameter(names = {"-i", "--input"}, required = true, description = "The path to the trajectory file.")
+    @Parameter(names = {"-i", "--input"}, description = "The path to the trajectory file.")
     private String inputTrajPath;
 
     @Parameter(names = {"-id", "--idResolver"},
@@ -39,17 +39,17 @@ public class LoadTrajectory extends CLICommand {
                     " You have the following modes of id resolution: index-based, constant-id and incremental." +
                     " [Index-based: -id 0,1 (i.e. column 0 and 1 will be used to form an id. Note: a single index is also okay).]" +
                     " [Constant-id: -id ${customid} (i.e. $137 means all rows in the file will go into one trajectory with the id 137).]" +
-                    " [Incremental: -id ++ (i.e. each row in the data-set will create a new trajectory that has an id incrementing from 0.)]",
-            required = true)
+                    " [Incremental: -id ++ (i.e. each row in the data-set will create a new trajectory that has an id incrementing from 0.)]")
     private String idResolverMode;
     private IdResolver idResolver; //instantiated in #parametersValid()
 
     @Parameter(names = {"-ll", "--latlonResolver"},
             description = "Specifies which column indexes hold the latitude and longitude data (respectively)." +
                           " For example: -ll 0 1 (meaning latitude in column 0 and longitude in column 1).",
-            arity = 2, required = true)
+            arity = 2)
     private List<String> latlonColumns;
-    private NumericFieldsResolver latlonResolver; //instantiated in #parametersValid()
+    private LatFieldResolver latFieldResolver; //instantiated in #parametersValid()
+    private LonFieldResolver lonFieldResolver; //instantiated in #parametersValid()
 
     /*
      * OPTIONAL command arguments
@@ -118,7 +118,7 @@ public class LoadTrajectory extends CLICommand {
     @Override
     protected boolean parametersValid() {
         if(inputTrajPath == null || inputTrajPath.isEmpty()){
-            System.err.println("Cannot load a trajectory if the input path is null.");
+            System.err.println("Cannot load a trajectory if the input path is null. Try adding -i path/to/my/traj.txt");
             return false;
         }
         if(!new File(inputTrajPath).exists()){
@@ -157,7 +157,8 @@ public class LoadTrajectory extends CLICommand {
 
         //check for lat lon
         if(latlonColumns == null){
-            System.err.println("Cannot load trajectory without latitude/longitude indices.");
+            System.err.println("Cannot load trajectory without latitude/longitude indices. " +
+                    "Try -ll 0 1 if latitude is in column index 0 and longitude is in column index 1.");
             return false;
         }
         if(latlonColumns.size() != 2){
@@ -169,7 +170,8 @@ public class LoadTrajectory extends CLICommand {
         try{
             int latIndex = Integer.parseInt(latlonColumns.get(0));
             int lonIndex = Integer.parseInt(latlonColumns.get(1));
-            latlonResolver = new NumericFieldsResolver(latIndex, lonIndex);
+            latFieldResolver = new LatFieldResolver(latIndex);
+            lonFieldResolver = new LonFieldResolver(lonIndex);
         }catch (NumberFormatException e){
             System.err.println("Could not parse lat/lon column indices. Make sure there is two numbers separated by spaces. " +
                     "Try -ll 0 1 if latitude is in column index 0 and longitude is in column index 1.");
@@ -221,9 +223,12 @@ public class LoadTrajectory extends CLICommand {
 
     protected void outputTrajectories(Map<String, ? extends ITrajectory> trajs){
         ServiceLoader<EntityConsumer> outputConsumers = ServiceLoader.load(EntityConsumer.class);
+
+        String layername = generateRerunAliasBasedOnParams();
+
         for (EntityConsumer outputConsumer : outputConsumers) {
             for (Map.Entry<String, ? extends ITrajectory> trajEntry : trajs.entrySet()) {
-                outputConsumer.consume(trajEntry.getKey(), trajEntry.getValue());
+                outputConsumer.consume(layername, trajEntry.getKey(), trajEntry.getValue());
             }
         }
     }
@@ -251,25 +256,27 @@ public class LoadTrajectory extends CLICommand {
     private AbstractTrajectoryParser<? extends ITrajectory> makeTrajectoryParser(){
 
         final AbstractGeographicProjection projection = new ProjectionEquirectangular();
-        final boolean inCartesianMode = false;
+        final boolean inCartesianMode = true;
 
         AbstractTrajectoryParser<? extends ITrajectory> parser;
 
         if(temporalFieldResolver == null){
-            parser = new SpatialTrajectoryParser(idResolver, latlonResolver, projection, inCartesianMode);
+            parser = new SpatialTrajectoryParser(idResolver, latFieldResolver, lonFieldResolver, projection, inCartesianMode);
         }
         else if(stopIndex == -1){
 
             parser = new STTrajectoryParser(
                     new ProjectionEquirectangular(),
                     idResolver,
-                    latlonResolver,
+                    latFieldResolver,
+                    lonFieldResolver,
                     temporalFieldResolver, inCartesianMode);
         }
         else {
             parser = new STStopTrajectoryParser(new ProjectionEquirectangular(),
                     idResolver,
-                    latlonResolver,
+                    latFieldResolver,
+                    lonFieldResolver,
                     temporalFieldResolver,
                     new StopFieldResolver(stopIndex), inCartesianMode);
         }

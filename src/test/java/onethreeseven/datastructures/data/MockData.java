@@ -56,7 +56,7 @@ public class MockData {
 
     public static String getSpatialOnlyDataString(){
         return "id x y\n" +
-                "1,137,137\n" +
+                "1,85,137\n" +
                 "1,15,10\n" +
                 "1,0,10\n" +
                 "1,-10,5\n" +
@@ -65,7 +65,7 @@ public class MockData {
 
     public static SpatialTrajectory makeMockSpatialOnlyTrajectory(){
         SpatialTrajectory spatialTrajectory = new SpatialTrajectory(false, new ProjectionEquirectangular());
-        spatialTrajectory.addGeographic(new double[]{137,137});
+        spatialTrajectory.addGeographic(new double[]{85,137});
         spatialTrajectory.addGeographic(new double[]{15,10});
         spatialTrajectory.addGeographic(new double[]{0,10});
         spatialTrajectory.addGeographic(new double[]{-10,5});

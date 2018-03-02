@@ -58,6 +58,10 @@ public class LoadTrajectoryViewController {
     public ChoiceBox<AbstractGeographicProjection> projectionDropDown;
     @FXML
     public ProgressBar progressBar;
+    @FXML
+    public ChoiceBox<String> recentConfigChoiceBox;
+    @FXML
+    public Button reloadRecentBtn;
 
     private File trajFile = null;
     private String trajLine = null;
@@ -81,7 +85,13 @@ public class LoadTrajectoryViewController {
                 new ProjectionTransverseMercator(),
                 new ProjectionUPS());
         projectionDropDown.getSelectionModel().selectFirst();
-        //setup traj load button
+        //setup recent configs
+        String[] rerunAliases = new LoadTrajectory().getRerunAliases();
+        recentConfigChoiceBox.getItems().addAll(rerunAliases);
+        if(rerunAliases.length > 0){
+            recentConfigChoiceBox.getSelectionModel().selectFirst();
+            reloadRecentBtn.setDisable(false);
+        }
     }
 
     private static final String initDirUserPrefKey = "InitTrajDir";
@@ -247,10 +257,6 @@ public class LoadTrajectoryViewController {
             return null;
         }
 
-        NumericFieldsResolver latlonFieldResolver = new NumericFieldsResolver(
-                latResolvers.iterator().next(),
-                lonResolvers.iterator().next());
-
         if(stopMoveResolvers.size() > 1){
             warningLabel.setText("Can only have one stop/move field.");
             return null;
@@ -265,11 +271,15 @@ public class LoadTrajectoryViewController {
             return null;
         }
 
+        LatFieldResolver latFieldResolver = latResolvers.iterator().next();
+        LonFieldResolver lonFieldResolver = lonResolvers.iterator().next();
+
         //made it here so we can make a valid parser
         if(stopMoveResolvers.size() == 1){
             return new STStopTrajectoryParser(projection,
                     idResolver,
-                    latlonFieldResolver,
+                    latFieldResolver,
+                    lonFieldResolver,
                     temporalResolver,
                     stopMoveResolvers.iterator().next(),
                     true);
@@ -277,12 +287,18 @@ public class LoadTrajectoryViewController {
         if(temporalResolver != null){
             return new STTrajectoryParser(projection,
                     idResolver,
-                    latlonFieldResolver,
+                    latFieldResolver,
+                    lonFieldResolver,
                     temporalResolver,
                     true);
         }
 
-        return new SpatialTrajectoryParser(idResolver, latlonFieldResolver, projection, true);
+        return new SpatialTrajectoryParser(
+                idResolver,
+                latFieldResolver,
+                lonFieldResolver,
+                projection,
+                true);
     }
 
     private void validateFieldValues(){
@@ -417,32 +433,45 @@ public class LoadTrajectoryViewController {
             //get the cli command from the parser we have gone to so much effort to make
             String[] commandString = parser.getCommandString(trajFile.getAbsoluteFile()).split(" ");
 
-            //run on a different thread
+            doLoadTrajCommand(commandString);
+        }
+    }
 
-            CompletableFuture.runAsync(() -> {
-                //make cli program to load the traj
-                CLIProgram program = new CLIProgram();
-                LoadTrajectory command = new LoadTrajectory();
-                program.addCommand(command);
+    private void doLoadTrajCommand(String[] commandString){
 
-                //show the progress bar and update it
-                //progressBar.setVisible(true);
-                command.setCustomProgressListener(percentComplete -> {
-                    Platform.runLater(()->{
-                        progressBar.setProgress(percentComplete);
-                    });
-                });
-                program.doCommand(commandString);
+        //run on a different thread
 
-                //done now, close the window
+        CompletableFuture.runAsync(() -> {
+            //make cli program to load the traj
+            CLIProgram program = new CLIProgram();
+            LoadTrajectory command = new LoadTrajectory();
+            program.addCommand(command);
+
+            //show the progress bar and update it
+            //progressBar.setVisible(true);
+            command.setCustomProgressListener(percentComplete -> {
                 Platform.runLater(()->{
-                    //close the window we are done here
-                    Stage stage = (Stage) loadBtn.getScene().getWindow();
-                    stage.close();
+                    progressBar.setProgress(percentComplete);
                 });
+            });
+            program.doCommand(commandString);
 
+            //done now, close the window
+            Platform.runLater(()->{
+                //close the window we are done here
+                Stage stage = (Stage) loadBtn.getScene().getWindow();
+                stage.close();
             });
 
+        });
+
+    }
+
+    public void onReloadRecent(ActionEvent actionEvent) {
+        String selectedRerunAlias = recentConfigChoiceBox.getSelectionModel().getSelectedItem();
+        if(selectedRerunAlias != null){
+            String[] commandsString = new String[]{"lt", "-rr", selectedRerunAlias};
+            doLoadTrajCommand(commandsString);
         }
     }
 }

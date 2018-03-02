@@ -1,8 +1,6 @@
 package onethreeseven.datastructures.data;
 
-import onethreeseven.datastructures.data.resolver.IdFieldResolver;
-import onethreeseven.datastructures.data.resolver.IdResolver;
-import onethreeseven.datastructures.data.resolver.NumericFieldsResolver;
+import onethreeseven.datastructures.data.resolver.*;
 import onethreeseven.datastructures.model.SpatialTrajectory;
 import onethreeseven.geo.projection.AbstractGeographicProjection;
 import onethreeseven.geo.projection.ProjectionEquirectangular;
@@ -15,25 +13,14 @@ import onethreeseven.geo.projection.ProjectionEquirectangular;
 public class SpatialTrajectoryParser extends AbstractTrajectoryParser<SpatialTrajectory> {
 
     private AbstractGeographicProjection projection;
-    private boolean inCartesianMode = false;
+    private boolean inCartesianMode;
 
-    /**
-     * Makes a spatial trajectory parser where index 0 is the id, lat/lon indices are passed
-     * in and we assume a {@link ProjectionEquirectangular} projection. Coordinates are not converted to cartesian coordinates,
-     * this can be triggered by the user by called {@link SpatialTrajectory#toCartesian()}.
-     * @param latIdx The index of the latitude field
-     * @param lonIdx The index of the longitude field
-     */
-    public SpatialTrajectoryParser(int latIdx, int lonIdx){
-        this(new IdFieldResolver(0), latIdx, lonIdx);
-    }
-
-    public SpatialTrajectoryParser(IdResolver idResolver, int latIdx, int lonIdx){
-        super(idResolver,new NumericFieldsResolver(latIdx, lonIdx));
-    }
-
-    public SpatialTrajectoryParser(IdResolver idResolver, NumericFieldsResolver latlonResolver, AbstractGeographicProjection projection, boolean inCartesianMode){
-        super(idResolver, latlonResolver);
+    public SpatialTrajectoryParser(IdResolver idResolver,
+                                   LatFieldResolver latFieldResolver,
+                                   LonFieldResolver lonFieldResolver,
+                                   AbstractGeographicProjection projection,
+                                   boolean inCartesianMode){
+        super(idResolver, new NumericFieldsResolver(latFieldResolver, lonFieldResolver));
         this.projection = projection;
         this.inCartesianMode = inCartesianMode;
     }

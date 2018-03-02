@@ -19,7 +19,7 @@
    <bottom>
       <ButtonBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: DIMGREY;" BorderPane.alignment="CENTER">
         <buttons>
-            <ProgressBar fx:id="progressBar" focusTraversable="false" prefWidth="50.0" progress="0.0" />
+            <ProgressBar fx:id="progressBar" prefWidth="50.0" progress="0.0" />
           <Button fx:id="loadBtn" disable="true" mnemonicParsing="false" onAction="#onLoadTrajClicked" text="Load" />
         </buttons>
          <padding>
@@ -37,6 +37,7 @@
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -44,16 +45,19 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Trajectory file:" GridPane.halignment="LEFT" />
-            <Button fx:id="openTrajBtn" mnemonicParsing="false" onAction="#onOpenTrajClicked" text="Select File..." GridPane.columnIndex="1" GridPane.halignment="LEFT" />
-            <Label fx:id="filenameLabel" style="-fx-background-color: GAINSBORO;" text="No file selected" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.vgrow="ALWAYS" />
-            <Label text="Delimiter:" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-            <TextField fx:id="delimiterLabel" alignment="CENTER" maxWidth="20.0" minWidth="20.0" prefColumnCount="10" prefWidth="20.0" promptText="Usually comma or semi-colon" text="," GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1" />
-            <Label text="Skip first n-lines:" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
-            <Spinner fx:id="nLinesSkipSpinner" maxWidth="50.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
-            <Label fx:id="warningLabel" style="-fx-background-color: LIGHTSALMON;" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-            <Label text="Projection:" GridPane.rowIndex="3" />
-            <ChoiceBox fx:id="projectionDropDown" prefWidth="150.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+            <Label text="Trajectory file:" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+            <Button fx:id="openTrajBtn" mnemonicParsing="false" onAction="#onOpenTrajClicked" text="Select File..." GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+            <Label fx:id="filenameLabel" style="-fx-background-color: GAINSBORO;" text="No file selected" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+            <Label text="Delimiter:" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+            <TextField fx:id="delimiterLabel" alignment="CENTER" maxWidth="20.0" minWidth="20.0" prefColumnCount="10" prefWidth="20.0" promptText="Usually comma or semi-colon" text="," GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" />
+            <Label text="Skip first n-lines:" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+            <Spinner fx:id="nLinesSkipSpinner" maxWidth="50.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+            <Label fx:id="warningLabel" style="-fx-background-color: LIGHTSALMON;" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+            <Label text="Projection:" GridPane.rowIndex="4" />
+            <ChoiceBox fx:id="projectionDropDown" prefWidth="150.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+            <Label text="Recently loaded:" />
+            <ChoiceBox fx:id="recentConfigChoiceBox" prefWidth="151.0" GridPane.columnIndex="1" GridPane.columnSpan="2" />
+            <Button fx:id="reloadRecentBtn" disable="true" mnemonicParsing="false" onAction="#onReloadRecent" text="Reload recent" GridPane.columnIndex="3" GridPane.halignment="CENTER" />
          </children>
          <BorderPane.margin>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

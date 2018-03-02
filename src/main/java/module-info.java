@@ -8,6 +8,7 @@ module onethreeseven.datastructures{
     requires java.logging;
     requires javafx.graphics;
     requires java.prefs;
+    requires java.desktop;
 
     exports onethreeseven.datastructures.algorithm;
     exports onethreeseven.datastructures.data;
@@ -31,5 +32,8 @@ module onethreeseven.datastructures{
     provides onethreeseven.jclimod.AbstractCommandsListing with onethreeseven.datastructures.command.DatastructuresCommandsListing;
 
     opens onethreeseven.datastructures.command to jcommander, onethreeseven.jclimod;
+
+    //send our graphics supplier as a service
+    provides onethreeseven.trajsuitePlugin.graphics.GraphicsSupplier with onethreeseven.datastructures.graphics.DatastructuresGraphicsSuppliers;
 
 }

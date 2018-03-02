@@ -86,9 +86,18 @@ public class SpatioCompositeTrajectory<T extends CompositePt> extends CompositeT
      * @param compositePt a spatio-composite point whose coordinates we are assuming are geographic
      */
     protected void addGeographic(T compositePt){
+        double lat = compositePt.coords[0];
+        double lon = compositePt.coords[1];
+        if(lat < -90 || lat > 90){
+            throw new IllegalArgumentException("Latitude must be between -90 and 90, got passed: " + lat);
+        }
+        if(lon < -180 || lon > 180){
+            throw new IllegalArgumentException("Longitude must be between -180 and 180, got passed: " + lon);
+        }
+
         //check if we need to convert pt to cartesian before adding
         if(inCartesianMode){
-            double[] xy = this.projection.geographicToCartesian(compositePt.coords[0], compositePt.coords[1]);
+            double[] xy = this.projection.geographicToCartesian(lat, lon);
             compositePt.setCoords(xy);
         }
         this.add(compositePt);
@@ -137,6 +146,32 @@ public class SpatioCompositeTrajectory<T extends CompositePt> extends CompositeT
         };
     }
 
+    /**
+     * Iterator for cartesian coordinates of this trajectory. Even if the trajectory is in geographic mode
+     * this will not change the mode but do the conversion each time iterator.next() is called.
+     * @return An iterator over cartesian coordinates of this trajectory.
+     */
+    @Override
+    public Iterator<double[]> coordinateIter() {
+        return new Iterator<double[]>() {
+            final Iterator<T> stIter = entries.iterator();
+            @Override
+            public boolean hasNext() {
+                return stIter.hasNext();
+            }
+
+            @Override
+            public double[] next() {
+                T compositePt = stIter.next();
+                double[] coords = compositePt.coords;
+                if(!inCartesianMode){
+                    coords = projection.geographicToCartesian(coords[0], coords[1]);
+                }
+                return coords;
+            }
+        };
+    }
+
     public double[] getCoords(int i, boolean inCartesianMode){
         double[] coords = getCoords(i);
         //we are in the same mode the user requested, just return the coordinates
@@ -175,8 +210,7 @@ public class SpatioCompositeTrajectory<T extends CompositePt> extends CompositeT
 
     @Override
     public Iterator<double[]> geoCoordinateIter() {
-        toGeographic();
-        return coordinateIter();
+        return getGeoIter();
     }
 
 }

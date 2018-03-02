@@ -1,13 +1,9 @@
 package onethreeseven.datastructures.data;
 
-import onethreeseven.datastructures.data.resolver.IdResolver;
-import onethreeseven.datastructures.data.resolver.NumericFieldsResolver;
-import onethreeseven.datastructures.data.resolver.StopFieldResolver;
-import onethreeseven.datastructures.data.resolver.TemporalFieldResolver;
+import onethreeseven.datastructures.data.resolver.*;
 import onethreeseven.datastructures.model.STStopTrajectory;
 import onethreeseven.datastructures.model.TimeAndStop;
 import onethreeseven.geo.projection.AbstractGeographicProjection;
-import onethreeseven.geo.projection.ProjectionEquirectangular;
 import java.time.LocalDateTime;
 
 /**
@@ -16,30 +12,21 @@ import java.time.LocalDateTime;
  */
 public class STStopTrajectoryParser extends AbstractTrajectoryParser<STStopTrajectory> {
 
-    private boolean inCartesianMode = false;
+    private boolean inCartesianMode;
     private AbstractGeographicProjection projection;
     private TemporalFieldResolver temporalFieldResolver;
     private StopFieldResolver stopFieldResolver;
 
-    public STStopTrajectoryParser(IdResolver idResolver, int latIdx, int lonIdx, int stopIdx, int... timeIdx){
-        this(
-                new ProjectionEquirectangular(),
-                idResolver,
-                new NumericFieldsResolver(latIdx, lonIdx),
-                new TemporalFieldResolver(timeIdx),
-                new StopFieldResolver(stopIdx),
-                false);
-    }
-
     public STStopTrajectoryParser(
             AbstractGeographicProjection projection,
             IdResolver idResolver,
-            NumericFieldsResolver numericFieldsResolver,
+            LatFieldResolver latFieldResolver,
+            LonFieldResolver lonFieldResolver,
             TemporalFieldResolver temporalFieldResolver,
             StopFieldResolver stopFieldResolver,
             boolean inCartesianMode) {
 
-        super(idResolver, numericFieldsResolver);
+        super(idResolver, new NumericFieldsResolver(latFieldResolver, lonFieldResolver));
         this.stopFieldResolver = stopFieldResolver;
         this.temporalFieldResolver = temporalFieldResolver;
         this.inCartesianMode = inCartesianMode;

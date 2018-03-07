@@ -22,7 +22,7 @@ import java.net.URL;
 public class DataStructuresMenuSupplier implements MenuSupplier {
 
     @Override
-    public void supplyMenus(AbstractMenuBarPopulator populator, BaseTrajSuiteProgram program) {
+    public void supplyMenus(AbstractMenuBarPopulator populator, BaseTrajSuiteProgram program, Stage stage) {
 
         TrajSuiteMenu fileMenu = new TrajSuiteMenu("File");
         TrajSuiteMenu loadSubMenu = new TrajSuiteMenu("Load");
@@ -49,6 +49,7 @@ public class DataStructuresMenuSupplier implements MenuSupplier {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initStyle(StageStyle.UTILITY);
             stage.setTitle("Load Trajectory");
+            //stage.initOwner(stage);
             stage.setScene(new Scene(view));
             stage.show();
 

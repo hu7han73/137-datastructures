@@ -91,4 +91,10 @@ public class Trajectory implements ITrajectory<double[]> {
     public void add(double[] entry) {
         this.entries.add(entry);
     }
+
+    @Override
+    public String toString(){
+        return "Trajectory (" + size() + " entries)";
+    }
+
 }

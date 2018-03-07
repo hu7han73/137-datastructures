@@ -13,7 +13,7 @@ public class Main extends BasicFxApplication {
 
     @Override
     protected BaseTrajSuiteProgram preStart(Stage stage) {
-        return new BaseTrajSuiteProgram();
+        return BaseTrajSuiteProgram.getInstance();
     }
 
     @Override

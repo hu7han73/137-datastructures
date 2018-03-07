@@ -213,4 +213,9 @@ public class SpatioCompositeTrajectory<T extends CompositePt> extends CompositeT
         return getGeoIter();
     }
 
+    @Override
+    public String toString(){
+        return "Trajectory (" + size() + " entries)";
+    }
+
 }

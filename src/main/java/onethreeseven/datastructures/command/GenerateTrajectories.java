@@ -1,10 +1,12 @@
 package onethreeseven.datastructures.command;
 
 import com.beust.jcommander.Parameter;
+import onethreeseven.datastructures.graphics.TrajectoryGraphic;
 import onethreeseven.datastructures.model.ITrajectory;
 import onethreeseven.datastructures.util.DataGeneratorUtil;
 import onethreeseven.jclimod.CLICommand;
-import onethreeseven.trajsuitePlugin.model.EntityConsumer;
+import onethreeseven.trajsuitePlugin.model.TransactionProcessor;
+import onethreeseven.trajsuitePlugin.transaction.AddEntitiesTransaction;
 
 import java.util.HashMap;
 import java.util.List;
@@ -176,11 +178,16 @@ public class GenerateTrajectories extends CLICommand {
 
         String layername = generateRerunAliasBasedOnParams();
 
-        ServiceLoader<EntityConsumer> outputConsumers = ServiceLoader.load(EntityConsumer.class);
-        for (EntityConsumer outputConsumer : outputConsumers) {
-            for (Map.Entry<String, ? extends ITrajectory> trajEntry : trajs.entrySet()) {
-                outputConsumer.consume(layername, trajEntry.getKey(), trajEntry.getValue());
-            }
+        //make add entities transaction
+        AddEntitiesTransaction transaction = new AddEntitiesTransaction();
+        for (Map.Entry<String, ? extends ITrajectory> entry : trajs.entrySet()) {
+            transaction.add(layername, entry.getKey(), entry.getValue(), new TrajectoryGraphic(entry.getValue()));
+        }
+
+        //use service loader to find a transaction process to process adding these trajectories
+        ServiceLoader<TransactionProcessor> outputConsumers = ServiceLoader.load(TransactionProcessor.class);
+        for (TransactionProcessor outputConsumer : outputConsumers) {
+            outputConsumer.process(transaction);
         }
     }
 

@@ -1,17 +1,20 @@
 package onethreeseven.datastructures.command;
 
 import com.beust.jcommander.Parameter;
+import onethreeseven.common.util.ColorUtil;
 import onethreeseven.datastructures.data.AbstractTrajectoryParser;
 import onethreeseven.datastructures.data.STStopTrajectoryParser;
 import onethreeseven.datastructures.data.STTrajectoryParser;
 import onethreeseven.datastructures.data.SpatialTrajectoryParser;
 import onethreeseven.datastructures.data.resolver.*;
+import onethreeseven.datastructures.graphics.TrajectoryGraphic;
 import onethreeseven.datastructures.model.ITrajectory;
 import onethreeseven.geo.projection.AbstractGeographicProjection;
 import onethreeseven.geo.projection.ProjectionEquirectangular;
 import onethreeseven.jclimod.CLICommand;
-import onethreeseven.trajsuitePlugin.model.EntityConsumer;
-
+import onethreeseven.trajsuitePlugin.model.TransactionProcessor;
+import onethreeseven.trajsuitePlugin.transaction.AddEntitiesTransaction;
+import java.awt.*;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -227,14 +230,27 @@ public class LoadTrajectory extends CLICommand {
     }
 
     protected void outputTrajectories(Map<String, ? extends ITrajectory> trajs){
-        ServiceLoader<EntityConsumer> outputConsumers = ServiceLoader.load(EntityConsumer.class);
+        ServiceLoader<TransactionProcessor> outputConsumers =
+                ServiceLoader.load(TransactionProcessor.class);
 
         String layername = generateRerunAliasBasedOnParams();
 
-        for (EntityConsumer outputConsumer : outputConsumers) {
-            for (Map.Entry<String, ? extends ITrajectory> trajEntry : trajs.entrySet()) {
-                outputConsumer.consume(layername, trajEntry.getKey(), trajEntry.getValue());
-            }
+        int nColors = trajs.size();
+        Color[] colors = ColorUtil.generateNColors(nColors);
+
+        //add entities transaction
+        AddEntitiesTransaction transaction = new AddEntitiesTransaction();
+        int i = 0;
+        for (Map.Entry<String, ? extends ITrajectory> entry : trajs.entrySet()) {
+            TrajectoryGraphic graphic = new TrajectoryGraphic(entry.getValue());
+            graphic.fallbackColor.setValue(colors[i]);
+            transaction.add(layername, entry.getKey(), entry.getValue(), graphic);
+            i++;
+        }
+
+        //process the transaction
+        for (TransactionProcessor outputConsumer : outputConsumers) {
+            outputConsumer.process(transaction);
         }
     }
 

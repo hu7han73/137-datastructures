@@ -8,11 +8,10 @@ import onethreeseven.datastructures.model.Trajectory;
 import onethreeseven.datastructures.util.DataGeneratorUtil;
 import onethreeseven.geo.projection.AbstractGeographicProjection;
 import onethreeseven.geo.projection.ProjectionEquirectangular;
-import onethreeseven.geo.projection.ProjectionMercator;
 import org.junit.Assert;
 import org.junit.Test;
 import java.io.File;
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
@@ -55,7 +54,7 @@ public class TrajectoryDatasetParserTest {
     }
 
     @Test
-    public void testParseSampleTrucks() throws URISyntaxException {
+    public void testParseSampleTrucks() throws IOException {
         File dataset = MockData.makeTrucksDataset();
 
         STTrajectoryParser parser = new STTrajectoryParser(
@@ -83,7 +82,7 @@ public class TrajectoryDatasetParserTest {
     }
 
     @Test
-    public void testParseSampleGeolife() throws URISyntaxException {
+    public void testParseSampleGeolife() throws IOException {
         File dataset = MockData.makeGeolifeDataset();
 
         STTrajectoryParser parser = new STTrajectoryParser(projection,
@@ -126,7 +125,7 @@ public class TrajectoryDatasetParserTest {
     }
 
     @Test
-    public void testParseSpaceSeparated() throws URISyntaxException {
+    public void testParseSpaceSeparated() throws IOException {
         File dataset = MockData.makeSpacesDataset();
 
         final String id = "137";
@@ -158,7 +157,7 @@ public class TrajectoryDatasetParserTest {
     }
 
     @Test
-    public void testGenerateWriteParse(){
+    public void testGenerateWriteParse() throws IOException {
 
         final int nTrajs = 3;
         final boolean inCartesianMode = false;

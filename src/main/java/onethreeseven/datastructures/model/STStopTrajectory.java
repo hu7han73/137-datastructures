@@ -34,4 +34,9 @@ public class STStopTrajectory extends SpatioCompositeTrajectory<STStopPt> {
         super.addGeographic(new STStopPt(latlon, timeAndStop));
     }
 
+    @Override
+    public String toString(){
+        return "ST-Stop Trajectory (" + size() + " entries)";
+    }
+
 }

@@ -40,4 +40,10 @@ public class STTrajectory extends SpatioCompositeTrajectory<STPt> {
     public void addGeographic(double[] latlon, LocalDateTime time) {
         this.addGeographic(new STPt(latlon, time));
     }
+
+    @Override
+    public String toString(){
+        return "Spatio-temporal Trajectory (" + size() + " entries)";
+    }
+
 }

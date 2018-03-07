@@ -27,13 +27,10 @@ module onethreeseven.datastructures{
     provides onethreeseven.trajsuitePlugin.view.MenuSupplier with onethreeseven.datastructures.view.DataStructuresMenuSupplier;
 
     //uses this interface to provide loaded trajectories to other modules
-    uses onethreeseven.trajsuitePlugin.model.EntityConsumer;
+    uses onethreeseven.trajsuitePlugin.model.TransactionProcessor;
 
     provides onethreeseven.jclimod.AbstractCommandsListing with onethreeseven.datastructures.command.DatastructuresCommandsListing;
 
     opens onethreeseven.datastructures.command to jcommander, onethreeseven.jclimod;
-
-    //send our graphics supplier as a service
-    provides onethreeseven.trajsuitePlugin.graphics.GraphicsSupplier with onethreeseven.datastructures.graphics.DatastructuresGraphicsSuppliers;
 
 }

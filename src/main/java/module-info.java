@@ -17,6 +17,7 @@ module onethreeseven.datastructures{
     exports onethreeseven.datastructures.util;
     exports onethreeseven.datastructures.command;
     exports onethreeseven.datastructures.view;
+    exports onethreeseven.datastructures.graphics;
 
     //so we can run javafx
     exports onethreeseven.datastructures to javafx.graphics;

@@ -24,8 +24,8 @@ public class DataStructuresMenuSupplier implements MenuSupplier {
     @Override
     public void supplyMenus(AbstractMenuBarPopulator populator, BaseTrajSuiteProgram program, Stage stage) {
 
-        TrajSuiteMenu fileMenu = new TrajSuiteMenu("File");
-        TrajSuiteMenu loadSubMenu = new TrajSuiteMenu("Load");
+        TrajSuiteMenu fileMenu = new TrajSuiteMenu("File", -99);
+        TrajSuiteMenu loadSubMenu = new TrajSuiteMenu("Load", -1);
         fileMenu.addChild(loadSubMenu);
         loadSubMenu.addChild(new TrajSuiteMenuItem("Trajectory", this::showLoadTrajectoryView));
 

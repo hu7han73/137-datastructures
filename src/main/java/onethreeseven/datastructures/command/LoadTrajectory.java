@@ -2,6 +2,7 @@ package onethreeseven.datastructures.command;
 
 import com.beust.jcommander.Parameter;
 import onethreeseven.common.util.ColorUtil;
+import onethreeseven.common.util.FileUtil;
 import onethreeseven.datastructures.data.AbstractTrajectoryParser;
 import onethreeseven.datastructures.data.STStopTrajectoryParser;
 import onethreeseven.datastructures.data.STTrajectoryParser;
@@ -104,11 +105,7 @@ public class LoadTrajectory extends CLICommand {
 
     @Override
     public String generateRerunAliasBasedOnParams() {
-        String filename = new File(inputTrajPath).getName();
-        if(filename.contains(".")){
-            return filename.substring(0, filename.lastIndexOf("."));
-        }
-        return filename;
+        return FileUtil.getFilenameOnly(new File(inputTrajPath));
     }
 
     @Override

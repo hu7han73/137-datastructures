@@ -25,10 +25,13 @@ public class SpatialTrajectory extends SpatioCompositeTrajectory<SpatialTrajecto
         super(inCartesianMode, projection);
     }
 
+    public void addCartesian(double[] coord){
+        super.addCartesian(new SpatialPt(coord));
+    }
+
     /**
      * Add a lat/lon coordinate.
-     * @param geo A {lat,lon} or a {easting,northing} coordinate
-     *            (depends on the projection passed in to the constructor).
+     * @param geo A {lat,lon} coordinate).
      */
     public void addGeographic(double[] geo){
         super.addGeographic(new SpatialPt(geo));

@@ -104,7 +104,10 @@ public class STStopTrajectoryGraphic extends TrajectoryGraphic {
         //convert centre to geo
         double[] latlon = proj.cartesianToGeographic(centerPt);
         CirclePrefab circlePrefab = new CirclePrefab(latlon, radius);
+        circlePrefab.color.setValue(color);
+
         prefabs.add(circlePrefab);
+
 
         //do stop label
         LocalDateTime endTime = stopBlock.get(stopBlock.size()-1).getExtra();
@@ -112,6 +115,7 @@ public class STStopTrajectoryGraphic extends TrajectoryGraphic {
         long durationSecs = ChronoUnit.SECONDS.between(startTime, endTime);
         String label = "Stop [" + durationSecs + "s]";
         LabelPrefab labelPrefab = new LabelPrefab(label, latlon);
+        labelPrefab.doesScale.setValue(true);
         prefabs.add(labelPrefab);
 
     }

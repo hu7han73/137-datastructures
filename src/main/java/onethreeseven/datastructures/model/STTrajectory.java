@@ -37,6 +37,53 @@ public class STTrajectory extends SpatioCompositeTrajectory<STPt> {
         return dist/(deltaTimeMillis/1000.0);
     }
 
+    public double getMinSpeed(){
+        double minSpeed = Double.MAX_VALUE;
+        for (int i = 0; i < size(); i++) {
+            double curSpeed = getSpeed(i);
+            if(curSpeed < minSpeed){
+                minSpeed = curSpeed;
+            }
+        }
+        return minSpeed;
+    }
+
+    public double getMaxSpeed(){
+        double maxSpeed = Double.MIN_VALUE;
+        for (int i = 0; i < size(); i++) {
+            double curSpeed = getSpeed(i);
+            if(curSpeed > maxSpeed){
+                maxSpeed = curSpeed;
+            }
+        }
+        return maxSpeed;
+    }
+
+    public double getAverageSpeed(){
+        double avgSpeed = 0;
+        for (int i = 0; i < size(); i++) {
+            double curSpeed = getSpeed(i);
+            avgSpeed += curSpeed;
+        }
+        return avgSpeed / size();
+    }
+
+    /**
+     * Gets the duration of this trajectory by checking its first and last entries.
+     * @param timeUnit The unit of time get the duration in.
+     * @return The duration of trajectory as defined above.
+     */
+    public long getDuration(ChronoUnit timeUnit){
+        int trajSize = size();
+
+        if(trajSize <= 1){
+            throw new IllegalArgumentException("Trajectory must have at least two entries.");
+        }
+        LocalDateTime startTime = getTime(0);
+        LocalDateTime endTime = getTime(trajSize-1);
+        return timeUnit.between(startTime, endTime);
+    }
+
     public void addGeographic(double[] latlon, LocalDateTime time) {
         this.addGeographic(new STPt(latlon, time));
     }

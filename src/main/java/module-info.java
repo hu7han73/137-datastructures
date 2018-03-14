@@ -1,3 +1,7 @@
+import onethreeseven.datastructures.view.DatastructuresMenuSupplier;
+import onethreeseven.datastructures.view.DatastructuresContextMenuSupplier;
+import onethreeseven.trajsuitePlugin.view.EntityContextMenuSupplier;
+
 module onethreeseven.datastructures{
 
     requires transitive onethreeseven.geo;
@@ -25,7 +29,7 @@ module onethreeseven.datastructures{
     opens onethreeseven.datastructures.view.controller to javafx.fxml;
 
     //provide this plug-ins menu to the main program
-    provides onethreeseven.trajsuitePlugin.view.MenuSupplier with onethreeseven.datastructures.view.DataStructuresMenuSupplier;
+    provides onethreeseven.trajsuitePlugin.view.MenuSupplier with DatastructuresMenuSupplier;
 
     //uses this interface to provide loaded trajectories to other modules
     uses onethreeseven.trajsuitePlugin.model.TransactionProcessor;
@@ -33,5 +37,8 @@ module onethreeseven.datastructures{
     provides onethreeseven.jclimod.AbstractCommandsListing with onethreeseven.datastructures.command.DatastructuresCommandsListing;
 
     opens onethreeseven.datastructures.command to jcommander, onethreeseven.jclimod;
+
+    //for context menu
+    provides EntityContextMenuSupplier with DatastructuresContextMenuSupplier;
 
 }

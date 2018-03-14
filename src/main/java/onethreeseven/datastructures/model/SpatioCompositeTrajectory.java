@@ -196,6 +196,33 @@ public class SpatioCompositeTrajectory<T extends CompositePt> extends CompositeT
         return Maths.dist(coordsI, coordsJ);
     }
 
+    /**
+     * Get the distance along the trajectory between two indices.
+     * @param startIdx The index to start measuring from.
+     * @param endIdx The index to stop measuring at.
+     * @return The total distance along the trajectory between the two indices (in cartesian coordinates).
+     */
+    public double distanceAlong(int startIdx, int endIdx){
+        if(startIdx > endIdx){
+            throw new IllegalArgumentException("Start index must be less than end index.");
+        }
+        if(startIdx == endIdx){
+            return 0;
+        }
+        if(startIdx < 0){
+            throw new IllegalArgumentException("Start index must be zero or greater.");
+        }
+        if(endIdx > size()-1){
+            throw new IllegalArgumentException("End index must be not exceed the size of the trajectory.");
+        }
+
+        double totalDist = 0;
+        for (int curIdx = startIdx; curIdx < endIdx; curIdx++) {
+            totalDist += getEuclideanDistance(curIdx, curIdx+1);
+        }
+        return totalDist;
+    }
+
     public double[] getCoords(int i){
         return this.entries.get(i).coords;
     }

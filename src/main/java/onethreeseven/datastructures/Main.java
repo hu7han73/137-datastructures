@@ -30,4 +30,11 @@ public class Main extends BasicFxApplication {
     public int getStartHeight() {
         return 480;
     }
+
+    @Override
+    protected void afterStart(Stage stage) {
+        super.afterStart(stage);
+        BaseTrajSuiteProgram.getInstance().getCLI().doCommand(
+                new String[]{"gt", "-ne", "1000", "-nt", "50"});
+    }
 }

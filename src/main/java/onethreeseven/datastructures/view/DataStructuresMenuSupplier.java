@@ -19,7 +19,7 @@ import java.net.URL;
  * Menu supplier for this plugin.
  * @author Luke Bermingham
  */
-public class DataStructuresMenuSupplier implements MenuSupplier {
+public class DatastructuresMenuSupplier implements MenuSupplier {
 
     @Override
     public void supplyMenus(AbstractMenuBarPopulator populator, BaseTrajSuiteProgram program, Stage stage) {
@@ -33,7 +33,7 @@ public class DataStructuresMenuSupplier implements MenuSupplier {
     }
 
     private void showLoadTrajectoryView(){
-        URL viewUrl = DataStructuresMenuSupplier.class
+        URL viewUrl = DatastructuresMenuSupplier.class
                 .getResource("/onethreeseven/datastructures/view/LoadTrajectory.fxml");
 
         if(viewUrl == null){

@@ -84,6 +84,10 @@ public class STTrajectory extends SpatioCompositeTrajectory<STPt> {
         return timeUnit.between(startTime, endTime);
     }
 
+    public void addCartesian(double[] coords, LocalDateTime time){
+        this.addCartesian(new STPt(coords, time));
+    }
+
     public void addGeographic(double[] latlon, LocalDateTime time) {
         this.addGeographic(new STPt(latlon, time));
     }

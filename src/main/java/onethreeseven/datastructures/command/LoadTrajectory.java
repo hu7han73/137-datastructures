@@ -8,8 +8,10 @@ import onethreeseven.datastructures.data.STStopTrajectoryParser;
 import onethreeseven.datastructures.data.STTrajectoryParser;
 import onethreeseven.datastructures.data.SpatialTrajectoryParser;
 import onethreeseven.datastructures.data.resolver.*;
+import onethreeseven.datastructures.graphics.STStopTrajectoryGraphic;
 import onethreeseven.datastructures.graphics.TrajectoryGraphic;
 import onethreeseven.datastructures.model.ITrajectory;
+import onethreeseven.datastructures.model.STStopTrajectory;
 import onethreeseven.geo.projection.AbstractGeographicProjection;
 import onethreeseven.geo.projection.ProjectionEquirectangular;
 import onethreeseven.jclimod.CLICommand;
@@ -239,7 +241,14 @@ public class LoadTrajectory extends CLICommand {
         AddEntitiesTransaction transaction = new AddEntitiesTransaction();
         int i = 0;
         for (Map.Entry<String, ? extends ITrajectory> entry : trajs.entrySet()) {
-            TrajectoryGraphic graphic = new TrajectoryGraphic(entry.getValue());
+            TrajectoryGraphic graphic;
+
+            if(entry.getValue() instanceof STStopTrajectory){
+                graphic = new STStopTrajectoryGraphic((STStopTrajectory) entry.getValue());
+            }
+            else{
+                graphic = new TrajectoryGraphic(entry.getValue());
+            }
             graphic.fallbackColor.setValue(colors[i]);
             transaction.add(layername, entry.getKey(), entry.getValue(), graphic);
             i++;

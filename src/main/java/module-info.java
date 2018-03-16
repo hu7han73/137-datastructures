@@ -27,6 +27,7 @@ module onethreeseven.datastructures{
     exports onethreeseven.datastructures to javafx.graphics;
     exports onethreeseven.datastructures.view.controller to javafx.fxml;
     opens onethreeseven.datastructures.view.controller to javafx.fxml;
+    opens onethreeseven.datastructures.view;
 
     //provide this plug-ins menu to the main program
     provides onethreeseven.trajsuitePlugin.view.MenuSupplier with DatastructuresMenuSupplier;

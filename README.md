@@ -1,4 +1,6 @@
 # 137-datastructures
+A module for [TrajSuite](https://github.com/lukehb/TrajSuite).
+
 Data structures used for building java applications, particularly data-mining projects.
 
 Latest binary:

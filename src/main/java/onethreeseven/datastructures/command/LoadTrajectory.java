@@ -250,6 +250,7 @@ public class LoadTrajectory extends CLICommand {
                 graphic = new TrajectoryGraphic(entry.getValue());
             }
             graphic.fallbackColor.setValue(colors[i]);
+            graphic.renderBehind.setValue(true);
             transaction.add(layername, entry.getKey(), entry.getValue(), graphic);
             i++;
         }
